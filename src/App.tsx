@@ -230,14 +230,14 @@ export default function App() {
     }
   }, [])
 
-  useEffect(() => {
-    warmImages(designProjects.map(project => project.gallery[0]))
-    warmImages(detailProjects.map(project => project.gallery[0]))
-  }, [])
-
   const openImageLightbox = (images: string[], index: number) => {
-    warmImages(images)
+    const nextIndex = (index + 1) % images.length
+    const previousIndex = (index - 1 + images.length) % images.length
+    warmImages([images[index], images[nextIndex], images[previousIndex]])
     setExpandedImage({ images, index })
+  }
+  const openPdf = (file: string) => {
+    window.open(file, '_blank', 'noopener,noreferrer')
   }
   const changeExpandedImage = (direction: number) => {
     setExpandedImage(current => current ? { ...current, index: (current.index + direction + current.images.length) % current.images.length } : null)
@@ -259,14 +259,6 @@ export default function App() {
   const activeDetailGallery = activeDetailProject.gallery
   const activeDetailImage = activeDetailGallery[Math.min(detailGalleryIndex, activeDetailGallery.length - 1)]
   const activeVideo = videoCategories[videoCategoryIndex].items[Math.min(videoItemIndex, videoCategories[videoCategoryIndex].items.length - 1)]
-
-  useEffect(() => {
-    void prepareImage(activeImage, 'high')
-  }, [activeImage])
-
-  useEffect(() => {
-    void prepareImage(activeDetailImage, 'high')
-  }, [activeDetailImage])
 
   const selectProject = (index: number) => {
     warmImages([designProjects[index].gallery[0]])
@@ -386,13 +378,13 @@ export default function App() {
 
     <section className="projects" id="projects"><div className="products-shell">
       <Fade className="product-heading"><h2>Product</h2><span/><p>图片设计&nbsp;&nbsp;|&nbsp;&nbsp;杨起锋 FENG</p></Fade>
-      <div className="product-tabs">{designProjects.map((project,index)=>{const Icon=project.icon;return <button className={index===projectIndex?'active':''} onPointerEnter={()=>warmImages(project.gallery)} onFocus={()=>warmImages(project.gallery)} onClick={()=>selectProject(index)} key={project.title}><span><Icon size={19}/></span><i><small>0{index+1}</small><b>{project.title}</b></i></button>})}</div>
+      <div className="product-tabs">{designProjects.map((project,index)=>{const Icon=project.icon;return <button className={index===projectIndex?'active':''} onPointerEnter={()=>warmImages([project.gallery[0]])} onFocus={()=>warmImages([project.gallery[0]])} onClick={()=>selectProject(index)} key={project.title}><span><Icon size={19}/></span><i><small>0{index+1}</small><b>{project.title}</b></i></button>})}</div>
       <Fade delay={.1} className="product-feature">
         <div className="product-controls"><button aria-label="上一个项目" onClick={()=>selectProject((projectIndex-1+designProjects.length)%designProjects.length)}><ChevronLeft/></button><div><b>{String(projectIndex+1).padStart(2,'0')} <span>/ {String(designProjects.length).padStart(2,'0')}</span></b><i><u style={{width:`${(projectIndex+1)/designProjects.length*100}%`}}/></i></div><button aria-label="下一个项目" onClick={()=>selectProject((projectIndex+1)%designProjects.length)}><ChevronRight/></button></div>
         <div className="product-main">
           <div className="product-visual">
             <div className="product-image-stage">
-              <img key={activeImage} src={activeImage} alt={`${activeProject.title} ${galleryIndex + 1}`} decoding="async"/>
+              <img key={activeImage} src={activeImage} alt={`${activeProject.title} ${galleryIndex + 1}`} loading="lazy" decoding="async"/>
               <div className="product-visual-shade"/>
               {activeGallery.length > 1 && <><button className="product-image-nav previous" aria-label="上一张图片" onClick={() => setGalleryIndex((galleryIndex - 1 + activeGallery.length) % activeGallery.length)}><ChevronLeft/></button><button className="product-image-nav next" aria-label="下一张图片" onClick={() => setGalleryIndex((galleryIndex + 1) % activeGallery.length)}><ChevronRight/></button></>}
               <button className="product-fullscreen" aria-label="放大查看" onPointerEnter={event=>prepareFullscreenTarget(event.currentTarget.closest('.product-image-stage')?.querySelector('img') ?? null)} onFocus={event=>prepareFullscreenTarget(event.currentTarget.closest('.product-image-stage')?.querySelector('img') ?? null)} onClick={()=>openImageLightbox(activeGallery, galleryIndex)}><Maximize2 size={19}/></button>
@@ -406,18 +398,18 @@ export default function App() {
         </div>
       </Fade>
       <Fade delay={.12} className="commerce-showcase">
-        <div className="product-tabs detail-tabs">{detailProjects.map((project,index)=>{const Icon=project.icon;return <button className={index===detailProjectIndex?'active':''} onPointerEnter={()=>warmImages(project.gallery)} onFocus={()=>warmImages(project.gallery)} onClick={()=>selectDetailProject(index)} key={project.title}><span><Icon size={19}/></span><i><small>{String(index+5).padStart(2,'0')}</small><b>{project.title}</b></i></button>})}</div>
+        <div className="product-tabs detail-tabs">{detailProjects.map((project,index)=>{const Icon=project.icon;return <button className={index===detailProjectIndex?'active':''} onPointerEnter={()=>warmImages([project.gallery[0]])} onFocus={()=>warmImages([project.gallery[0]])} onClick={()=>selectDetailProject(index)} key={project.title}><span><Icon size={19}/></span><i><small>{String(index+5).padStart(2,'0')}</small><b>{project.title}</b></i></button>})}</div>
         <div className="product-feature detail-feature">
           <div className="product-controls"><button aria-label="上一个详情项目" onClick={()=>selectDetailProject((detailProjectIndex-1+detailProjects.length)%detailProjects.length)}><ChevronLeft/></button><div><b>{String(detailProjectIndex+5).padStart(2,'0')} <span>/ 08</span></b><i><u style={{width:`${(detailProjectIndex+1)/detailProjects.length*100}%`}}/></i></div><button aria-label="下一个详情项目" onClick={()=>selectDetailProject((detailProjectIndex+1)%detailProjects.length)}><ChevronRight/></button></div>
           {detailProjectIndex === 0 ? <div className="suite-case-layout">
             <div className="suite-main-gallery">
               <div className="suite-main-stage">
-                <img src={activeDetailImage} alt={`套图案例主图 ${detailGalleryIndex + 1}`}/>
+                <img src={activeDetailImage} alt={`套图案例主图 ${detailGalleryIndex + 1}`} loading="lazy" decoding="async"/>
                 <button className="product-image-nav previous" aria-label="上一张主图" onClick={()=>setDetailGalleryIndex((detailGalleryIndex-1+activeDetailGallery.length)%activeDetailGallery.length)}><ChevronLeft/></button>
                 <button className="product-image-nav next" aria-label="下一张主图" onClick={()=>setDetailGalleryIndex((detailGalleryIndex+1)%activeDetailGallery.length)}><ChevronRight/></button>
                 <button className="product-fullscreen" aria-label="放大查看主图" onPointerEnter={event=>prepareFullscreenTarget(event.currentTarget.closest('.suite-main-gallery')?.querySelector('.suite-main-stage>img') ?? null)} onFocus={event=>prepareFullscreenTarget(event.currentTarget.closest('.suite-main-gallery')?.querySelector('.suite-main-stage>img') ?? null)} onClick={()=>openImageLightbox(activeDetailGallery, detailGalleryIndex)}><Maximize2 size={19}/></button>
               </div>
-              <div className="suite-thumbnails">{activeDetailGallery.map((image,index)=><button className={index===detailGalleryIndex?'active':''} key={image} onClick={()=>setDetailGalleryIndex(index)} aria-label={`查看第 ${index+1} 张套图`}><img src={image} alt=""/><span>{index+1}</span></button>)}</div>
+              <div className="suite-thumbnails">{activeDetailGallery.map((image,index)=><button className={index===detailGalleryIndex?'active':''} key={image} onClick={()=>setDetailGalleryIndex(index)} aria-label={`查看第 ${index+1} 张套图`}><img src={image} alt="" loading="lazy" decoding="async"/><span>{index+1}</span></button>)}</div>
             </div>
             <div className="suite-detail-panel">
               <div className="suite-detail-heading"><div><small>DETAIL PAGE</small><b>详情页展示</b></div><span>向下滚动 ↓</span></div>
@@ -433,7 +425,7 @@ export default function App() {
             </div>
           </div> : detailProjectIndex === 1 ? <div className="suite-case-layout domestic-case-layout">
             <div className="domestic-report-panel">
-              <img src={domesticReport} alt="国内电商销售战报" role="button" tabIndex={0} aria-label="点击放大查看销售战报" onMouseEnter={event=>prepareFullscreenTarget(event.currentTarget)} onFocus={event=>prepareFullscreenTarget(event.currentTarget)} onClick={()=>openImageLightbox([domesticReport], 0)} onKeyDown={(event)=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openImageLightbox([domesticReport], 0)}}}/>
+              <img src={domesticReport} alt="国内电商销售战报" loading="lazy" decoding="async" role="button" tabIndex={0} aria-label="点击放大查看销售战报" onMouseEnter={event=>prepareFullscreenTarget(event.currentTarget)} onFocus={event=>prepareFullscreenTarget(event.currentTarget)} onClick={()=>openImageLightbox([domesticReport], 0)} onKeyDown={(event)=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openImageLightbox([domesticReport], 0)}}}/>
               <button className="product-fullscreen" aria-label="放大查看销售战报" onPointerEnter={event=>prepareFullscreenTarget(event.currentTarget.closest('.domestic-report-panel')?.querySelector('img') ?? null)} onFocus={event=>prepareFullscreenTarget(event.currentTarget.closest('.domestic-report-panel')?.querySelector('img') ?? null)} onClick={()=>openImageLightbox([domesticReport], 0)}><Maximize2 size={19}/></button>
             </div>
             <div className="suite-detail-panel">
@@ -444,14 +436,14 @@ export default function App() {
             </div>
           </div> : detailProjectIndex === 3 ? <div className="product-main studio-build-layout">
             <div className="studio-plan-viewer">
-              <div className="studio-plan-toolbar"><span>装修方案 4.0</span><small>向下滚动浏览完整方案</small></div>
+              <div className="studio-plan-toolbar" role="link" tabIndex={0} aria-label="在新标签页打开拍摄间装修方案" onClick={()=>openPdf(studioBuildPlan)} onKeyDown={event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openPdf(studioBuildPlan)}}}><span>装修方案 4.0</span><small>向下滚动浏览完整方案</small></div>
               <iframe src={`${studioBuildPlan}#view=FitH`} title="拍摄间装修方案" loading="lazy" />
             </div>
             <div className="product-info"><div><small>STUDIO BUILD PLAN</small><h3>{activeDetailProject.title}</h3><div className="product-tags">{activeDetailProject.tags.map(tag=><span key={tag}>{tag}</span>)}</div><p>完整装修方案已嵌入，可在左侧直接滚动浏览各页内容。</p></div><div className="product-detail-grid selling-points"><div><h4>方案目录</h4><ul>{activeDetailProject.sellingPoints.map((item,index)=><li key={item}><span>{index+1}</span>{item}</li>)}</ul></div></div></div>
           </div> : <div className="product-main">
             <div className="product-visual">
-              <div className="product-image-stage"><img src={activeDetailImage} alt={`${activeDetailProject.title} ${detailGalleryIndex+1}`}/><div className="product-visual-shade"/><button className="product-image-nav previous" aria-label="上一张图片" onClick={()=>setDetailGalleryIndex((detailGalleryIndex-1+activeDetailGallery.length)%activeDetailGallery.length)}><ChevronLeft/></button><button className="product-image-nav next" aria-label="下一张图片" onClick={()=>setDetailGalleryIndex((detailGalleryIndex+1)%activeDetailGallery.length)}><ChevronRight/></button><button className="product-fullscreen" aria-label="放大查看" onPointerEnter={event=>prepareFullscreenTarget(event.currentTarget.closest('.product-image-stage')?.querySelector('img') ?? null)} onFocus={event=>prepareFullscreenTarget(event.currentTarget.closest('.product-image-stage')?.querySelector('img') ?? null)} onClick={()=>openImageLightbox(activeDetailGallery, detailGalleryIndex)}><Maximize2 size={19}/></button></div>
-              <div className="product-thumbnails">{activeDetailGallery.map((image,index)=><button className={index===detailGalleryIndex?'active':''} key={image} onClick={()=>setDetailGalleryIndex(index)} aria-label={`查看第 ${index+1} 张图片`}><img src={image} alt=""/><span>{index+1}</span></button>)}</div>
+              <div className="product-image-stage"><img src={activeDetailImage} alt={`${activeDetailProject.title} ${detailGalleryIndex+1}`} loading="lazy" decoding="async"/><div className="product-visual-shade"/><button className="product-image-nav previous" aria-label="上一张图片" onClick={()=>setDetailGalleryIndex((detailGalleryIndex-1+activeDetailGallery.length)%activeDetailGallery.length)}><ChevronLeft/></button><button className="product-image-nav next" aria-label="下一张图片" onClick={()=>setDetailGalleryIndex((detailGalleryIndex+1)%activeDetailGallery.length)}><ChevronRight/></button><button className="product-fullscreen" aria-label="放大查看" onPointerEnter={event=>prepareFullscreenTarget(event.currentTarget.closest('.product-image-stage')?.querySelector('img') ?? null)} onFocus={event=>prepareFullscreenTarget(event.currentTarget.closest('.product-image-stage')?.querySelector('img') ?? null)} onClick={()=>openImageLightbox(activeDetailGallery, detailGalleryIndex)}><Maximize2 size={19}/></button></div>
+              <div className="product-thumbnails">{activeDetailGallery.map((image,index)=><button className={index===detailGalleryIndex?'active':''} key={image} onClick={()=>setDetailGalleryIndex(index)} aria-label={`查看第 ${index+1} 张图片`}><img src={image} alt="" loading="lazy" decoding="async"/><span>{index+1}</span></button>)}</div>
             </div>
             <div className="product-info"><div><small>Featured Product</small><h3>{activeDetailProject.title}</h3><div className="product-tags">{activeDetailProject.tags.map(tag=><span key={tag}>{tag}</span>)}</div><p>{activeDetailProject.summary}</p></div><div className="product-detail-grid selling-points"><div><h4>内容框位</h4><ul>{activeDetailProject.sellingPoints.map((item,index)=><li key={item}><span>{index+1}</span>{item}</li>)}</ul></div></div></div>
           </div>
@@ -474,7 +466,7 @@ export default function App() {
         {isPackagingOpen&&<div className="packaging-material-panel">
           <div className="packaging-material-inner">
             <div className="packaging-material-title"><div><small>{project.english} / MATERIAL SHOWCASE</small><h4>{project.title}物料展示</h4></div><p>{['color-box','carton','label','guide','manual','brand'].includes(project.type)?'点击右上角图标，即可全屏放大查看方案。':'点击下方位置可依次替换为项目实拍、设计稿与工艺细节。'}</p></div>
-            {project.type==='manual' ? <div className="color-box-document-grid">{userManualCases.map((item,index)=><div className={`color-box-document manual-document color-box-document-${index+1}`} key={item.file}><iframe key={`${item.file}-${manualPageIndexes[index]}`} src={`${item.file}#page=${manualPageIndexes[index]+1}&view=FitH`} title={item.label} loading="lazy"/><span>{String(index+1).padStart(2,'0')}</span><b>{item.label}</b><div className="manual-page-controls"><button type="button" aria-label={`查看${item.label}上一页`} onClick={()=>changeManualPage(index,-1)}><ChevronLeft size={18}/></button><small>{String(manualPageIndexes[index]+1).padStart(2,'0')} / {String(item.pages).padStart(2,'0')}</small><button type="button" aria-label={`查看${item.label}下一页`} onClick={()=>changeManualPage(index,1)}><ChevronRight size={18}/></button></div><button className="color-box-zoom" type="button" aria-label={`全屏查看${item.label}`} onClick={event=>{const target=event.currentTarget.closest('.color-box-document');if(document.fullscreenElement){void document.exitFullscreen()}else{void target?.requestFullscreen()}}}><Maximize2 size={18}/></button></div>)}</div> : ['color-box','carton','label','guide','brand'].includes(project.type) ? <div className={`color-box-document-grid ${['color-box','carton','label'].includes(project.type)?'wide-document-grid':''} ${project.type==='guide'||project.type==='brand'?'single-document-grid':''}`}>{(project.type==='color-box'?colorBoxCases:project.type==='carton'?masterCartonCases:project.type==='label'?ratingLabelCases:project.type==='guide'?quickStartGuideCases:brandGuideCases).map((item,index)=><div className={`color-box-document color-box-document-${index+1}`} key={item.file}><iframe src={`${item.file}#view=FitH`} title={item.label} loading="lazy"/><span>{String(index+1).padStart(2,'0')}</span><b>{item.label}</b><button className="color-box-zoom" type="button" aria-label={`全屏查看${item.label}`} onClick={event=>{const target=event.currentTarget.closest('.color-box-document');if(document.fullscreenElement){void document.exitFullscreen()}else{void target?.requestFullscreen()}}}><Maximize2 size={18}/></button></div>)}</div> : <div className="packaging-material-grid">{['成品效果','正反面展示','刀模 / 展开图','版面细节','材质与工艺','应用场景'].map((label,index)=><div className={index===0?'featured':''} key={label}><img src={`/product-placeholder.svg?packaging=${i+1}-${index+1}`} alt=""/><span>{String(index+1).padStart(2,'0')}</span><b>{label}</b></div>)}</div>}
+            {project.type==='manual' ? <div className="color-box-document-grid">{userManualCases.map((item,index)=><div className={`color-box-document manual-document color-box-document-${index+1}`} key={item.file}><iframe key={`${item.file}-${manualPageIndexes[index]}`} src={`${item.file}#page=${manualPageIndexes[index]+1}&view=FitH`} title={item.label} loading="lazy"/><span>{String(index+1).padStart(2,'0')}</span><b>{item.label}</b><div className="manual-page-controls"><button type="button" aria-label={`查看${item.label}上一页`} onClick={()=>changeManualPage(index,-1)}><ChevronLeft size={18}/></button><small>{String(manualPageIndexes[index]+1).padStart(2,'0')} / {String(item.pages).padStart(2,'0')}</small><button type="button" aria-label={`查看${item.label}下一页`} onClick={()=>changeManualPage(index,1)}><ChevronRight size={18}/></button></div><button className="color-box-zoom" type="button" aria-label={`在新标签页打开${item.label}`} onClick={()=>openPdf(item.file)}><Maximize2 size={18}/></button></div>)}</div> : ['color-box','carton','label','guide','brand'].includes(project.type) ? <div className={`color-box-document-grid ${['color-box','carton','label'].includes(project.type)?'wide-document-grid':''} ${project.type==='guide'||project.type==='brand'?'single-document-grid':''}`}>{(project.type==='color-box'?colorBoxCases:project.type==='carton'?masterCartonCases:project.type==='label'?ratingLabelCases:project.type==='guide'?quickStartGuideCases:brandGuideCases).map((item,index)=><div className={`color-box-document color-box-document-${index+1}`} key={item.file}><iframe src={`${item.file}#view=FitH`} title={item.label} loading="lazy"/><span>{String(index+1).padStart(2,'0')}</span><b>{item.label}</b><button className="color-box-zoom" type="button" aria-label={`在新标签页打开${item.label}`} onClick={()=>openPdf(item.file)}><Maximize2 size={18}/></button></div>)}</div> : <div className="packaging-material-grid">{['成品效果','正反面展示','刀模 / 展开图','版面细节','材质与工艺','应用场景'].map((label,index)=><div className={index===0?'featured':''} key={label}><img src={`/product-placeholder.svg?packaging=${i+1}-${index+1}`} alt=""/><span>{String(index+1).padStart(2,'0')}</span><b>{label}</b></div>)}</div>}
           </div>
         </div>}
       </Fade>})}</div>
@@ -486,7 +478,7 @@ export default function App() {
         <div className="video-category-list">{videoCategories.map((category,index)=><button className={index===videoCategoryIndex?'active':''} onClick={()=>{setVideoCategoryIndex(index);setVideoItemIndex(0)}} key={category.title}><span>{String(index+1).padStart(2,'0')}</span><i><b>{category.title}</b><small>{category.english}</small></i><ArrowUpRight size={18}/></button>)}</div>
         <div className="video-player-card embedded-video">
           <div className="video-player-top"><span>{videoCategories[videoCategoryIndex].english}</span><small>PROJECT {String(videoCategoryIndex+1).padStart(2,'0')} / 04</small></div>
-          <a className={`video-cover ${videoCategoryIndex===2&&videoItemIndex>0?'portrait-cover':''}`} href={activeVideo.url} target="_blank" rel="noreferrer" aria-label={`打开${activeVideo.title}播放页`}><img src={activeVideo.cover} alt={`${activeVideo.title}视频封面`}/><span><Play fill="currentColor" size={22}/></span><b>点击播放</b></a>
+          <a className={`video-cover ${videoCategoryIndex===2&&videoItemIndex>0?'portrait-cover':''}`} href={activeVideo.url} target="_blank" rel="noreferrer" aria-label={`打开${activeVideo.title}播放页`}><img src={activeVideo.cover} alt={`${activeVideo.title}视频封面`} loading="lazy" decoding="async"/><span><Play fill="currentColor" size={22}/></span><b>点击播放</b></a>
         </div>
         <div className="video-project-info"><small>SELECTED CATEGORY</small><h3>{videoCategories[videoCategoryIndex].title}</h3><p>{videoCategories[videoCategoryIndex].description}</p><div>{videoCategories[videoCategoryIndex].items.map((item,index)=><button className={index===videoItemIndex?'active':''} key={item.url} onClick={()=>setVideoItemIndex(index)}><span>{String(index+1).padStart(2,'0')}</span>{item.title}<Play size={13}/></button>)}</div></div>
       </div>

@@ -254,3 +254,5 @@ nav{position:fixed!important;top:0;right:0;left:0;z-index:100}.welcome-marquee-r
   .packaging-arrow{grid-column:3}
   .packaging-description{grid-column:2/4}
 }
+
+.studio-plan-toolbar{cursor:pointer}
