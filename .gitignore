@@ -1,0 +1,11 @@
+# Dependencies and build output
+node_modules/
+dist/
+.pnpm-store/
+
+# Local runtime and temporary files
+.runtime/
+tmp/
+
+# Logs
+*.log
