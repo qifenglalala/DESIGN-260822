@@ -102,6 +102,15 @@ const bilibiliVideoCover = '/video-cover/s20-pro-promo-cover-0822.png'
 
 const warmedImages = new Set<string>()
 const preparedImages = new Map<string, Promise<void>>()
+const mobileImage = (src: string) => {
+  const [path, query] = src.split('?')
+  return path.endsWith('.jpg') ? `/mobile${path}${query ? `?${query}` : ''}` : src
+}
+const thumbnailImage = (src: string) => {
+  const [path, query] = src.split('?')
+  return path.endsWith('.jpg') ? `/thumb${path}${query ? `?${query}` : ''}` : src
+}
+const preferredImage = (src: string) => typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches ? mobileImage(src) : src
 
 function prepareImage(src: string, priority: 'high' | 'low' = 'low') {
   if (!src) return Promise.resolve()
@@ -128,7 +137,7 @@ function prepareImage(src: string, priority: 'high' | 'low' = 'low') {
 }
 
 function warmImages(images: string[], priority: 'high' | 'low' = 'low') {
-  images.forEach(src => {
+  images.map(preferredImage).forEach(src => {
     if (warmedImages.has(src)) return
     warmedImages.add(src)
     void prepareImage(src, priority)
@@ -395,12 +404,12 @@ export default function App() {
         <div className="product-main">
           <div className="product-visual">
             <div className="product-image-stage">
-              <img key={activeImage} src={activeImage} alt={`${activeProject.title} ${galleryIndex + 1}`} loading="eager" fetchPriority="high" decoding="async"/>
+              <img key={activeImage} src={activeImage} srcSet={`${mobileImage(activeImage)} 1800w, ${activeImage} 5400w`} sizes="(max-width: 1000px) 100vw, 58vw" alt={`${activeProject.title} ${galleryIndex + 1}`} loading="eager" fetchPriority="high" decoding="async"/>
               <div className="product-visual-shade"/>
               {activeGallery.length > 1 && <><button className="product-image-nav previous" aria-label="上一张图片" onClick={() => setGalleryIndex((galleryIndex - 1 + activeGallery.length) % activeGallery.length)}><ChevronLeft/></button><button className="product-image-nav next" aria-label="下一张图片" onClick={() => setGalleryIndex((galleryIndex + 1) % activeGallery.length)}><ChevronRight/></button></>}
               <button className="product-fullscreen" aria-label="放大查看" onPointerEnter={event=>prepareFullscreenTarget(event.currentTarget.closest('.product-image-stage')?.querySelector('img') ?? null)} onFocus={event=>prepareFullscreenTarget(event.currentTarget.closest('.product-image-stage')?.querySelector('img') ?? null)} onClick={()=>openImageLightbox(activeGallery, galleryIndex)}><Maximize2 size={19}/></button>
             </div>
-            {activeGallery.length > 1 && <div className="product-thumbnails">{activeGallery.map((image, index) => <button className={index === galleryIndex ? 'active' : ''} key={image} onPointerEnter={()=>warmImages([image])} onClick={() => setGalleryIndex(index)} aria-label={`查看第 ${index + 1} 张内部渲染图`}><img src={image} alt="" loading="lazy" decoding="async"/><span>{index + 1}</span></button>)}</div>}
+            {activeGallery.length > 1 && <div className="product-thumbnails">{activeGallery.map((image, index) => <button className={index === galleryIndex ? 'active' : ''} key={image} onPointerEnter={()=>warmImages([image])} onClick={() => setGalleryIndex(index)} aria-label={`查看第 ${index + 1} 张内部渲染图`}><img src={thumbnailImage(image)} alt="" loading="lazy" decoding="async"/><span>{index + 1}</span></button>)}</div>}
           </div>
           <div className="product-info">
             <div><small>Featured Product</small><h3>{activeProject.title}</h3><div className="product-tags">{activeProject.tags.map(tag=><span key={tag}>{tag}</span>)}</div><p>{activeProject.summary}</p></div>
@@ -415,12 +424,12 @@ export default function App() {
           {detailProjectIndex === 0 ? <div className="suite-case-layout">
             <div className="suite-main-gallery">
               <div className="suite-main-stage">
-                <img src={activeDetailImage} alt={`套图案例主图 ${detailGalleryIndex + 1}`} loading="eager" fetchPriority="high" decoding="async"/>
+                <img src={activeDetailImage} srcSet={`${mobileImage(activeDetailImage)} 1800w, ${activeDetailImage} 5400w`} sizes="(max-width: 1000px) 100vw, 58vw" alt={`套图案例主图 ${detailGalleryIndex + 1}`} loading="eager" fetchPriority="high" decoding="async"/>
                 <button className="product-image-nav previous" aria-label="上一张主图" onClick={()=>setDetailGalleryIndex((detailGalleryIndex-1+activeDetailGallery.length)%activeDetailGallery.length)}><ChevronLeft/></button>
                 <button className="product-image-nav next" aria-label="下一张主图" onClick={()=>setDetailGalleryIndex((detailGalleryIndex+1)%activeDetailGallery.length)}><ChevronRight/></button>
                 <button className="product-fullscreen" aria-label="放大查看主图" onPointerEnter={event=>prepareFullscreenTarget(event.currentTarget.closest('.suite-main-gallery')?.querySelector('.suite-main-stage>img') ?? null)} onFocus={event=>prepareFullscreenTarget(event.currentTarget.closest('.suite-main-gallery')?.querySelector('.suite-main-stage>img') ?? null)} onClick={()=>openImageLightbox(activeDetailGallery, detailGalleryIndex)}><Maximize2 size={19}/></button>
               </div>
-              <div className="suite-thumbnails">{activeDetailGallery.map((image,index)=><button className={index===detailGalleryIndex?'active':''} key={image} onClick={()=>setDetailGalleryIndex(index)} aria-label={`查看第 ${index+1} 张套图`}><img src={image} alt="" loading="lazy" decoding="async"/><span>{index+1}</span></button>)}</div>
+              <div className="suite-thumbnails">{activeDetailGallery.map((image,index)=><button className={index===detailGalleryIndex?'active':''} key={image} onClick={()=>setDetailGalleryIndex(index)} aria-label={`查看第 ${index+1} 张套图`}><img src={thumbnailImage(image)} alt="" loading="lazy" decoding="async"/><span>{index+1}</span></button>)}</div>
             </div>
             <div className="suite-detail-panel">
               <div className="suite-detail-heading"><div><small>DETAIL PAGE</small><b>详情页展示</b></div><span>向下滚动 ↓</span></div>
@@ -436,7 +445,7 @@ export default function App() {
             </div>
           </div> : detailProjectIndex === 1 ? <div className="suite-case-layout domestic-case-layout">
             <div className="domestic-report-panel">
-              <img src={domesticReport} alt="国内电商销售战报" loading="lazy" decoding="async" role="button" tabIndex={0} aria-label="点击放大查看销售战报" onMouseEnter={event=>prepareFullscreenTarget(event.currentTarget)} onFocus={event=>prepareFullscreenTarget(event.currentTarget)} onClick={()=>openImageLightbox([domesticReport], 0)} onKeyDown={(event)=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openImageLightbox([domesticReport], 0)}}}/>
+              <img src={domesticReport} srcSet={`${mobileImage(domesticReport)} 1800w, ${domesticReport} 5400w`} sizes="(max-width: 1000px) 100vw, 58vw" alt="国内电商销售战报" loading="lazy" decoding="async" role="button" tabIndex={0} aria-label="点击放大查看销售战报" onMouseEnter={event=>prepareFullscreenTarget(event.currentTarget)} onFocus={event=>prepareFullscreenTarget(event.currentTarget)} onClick={()=>openImageLightbox([domesticReport], 0)} onKeyDown={(event)=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openImageLightbox([domesticReport], 0)}}}/>
               <button className="product-fullscreen" aria-label="放大查看销售战报" onPointerEnter={event=>prepareFullscreenTarget(event.currentTarget.closest('.domestic-report-panel')?.querySelector('img') ?? null)} onFocus={event=>prepareFullscreenTarget(event.currentTarget.closest('.domestic-report-panel')?.querySelector('img') ?? null)} onClick={()=>openImageLightbox([domesticReport], 0)}><Maximize2 size={19}/></button>
             </div>
             <div className="suite-detail-panel">
@@ -453,8 +462,8 @@ export default function App() {
             <div className="product-info"><div><small>STUDIO BUILD PLAN</small><h3>{activeDetailProject.title}</h3><div className="product-tags">{activeDetailProject.tags.map(tag=><span key={tag}>{tag}</span>)}</div><p>完整装修方案已嵌入，可在左侧直接滚动浏览各页内容。</p></div><div className="product-detail-grid selling-points"><div><h4>方案目录</h4><ul>{activeDetailProject.sellingPoints.map((item,index)=><li key={item}><span>{index+1}</span>{item}</li>)}</ul></div></div></div>
           </div> : <div className="product-main">
             <div className="product-visual">
-              <div className="product-image-stage"><img src={activeDetailImage} alt={`${activeDetailProject.title} ${detailGalleryIndex+1}`} loading="eager" fetchPriority="high" decoding="async"/><div className="product-visual-shade"/><button className="product-image-nav previous" aria-label="上一张图片" onClick={()=>setDetailGalleryIndex((detailGalleryIndex-1+activeDetailGallery.length)%activeDetailGallery.length)}><ChevronLeft/></button><button className="product-image-nav next" aria-label="下一张图片" onClick={()=>setDetailGalleryIndex((detailGalleryIndex+1)%activeDetailGallery.length)}><ChevronRight/></button><button className="product-fullscreen" aria-label="放大查看" onPointerEnter={event=>prepareFullscreenTarget(event.currentTarget.closest('.product-image-stage')?.querySelector('img') ?? null)} onFocus={event=>prepareFullscreenTarget(event.currentTarget.closest('.product-image-stage')?.querySelector('img') ?? null)} onClick={()=>openImageLightbox(activeDetailGallery, detailGalleryIndex)}><Maximize2 size={19}/></button></div>
-              <div className="product-thumbnails">{activeDetailGallery.map((image,index)=><button className={index===detailGalleryIndex?'active':''} key={image} onClick={()=>setDetailGalleryIndex(index)} aria-label={`查看第 ${index+1} 张图片`}><img src={image} alt="" loading="lazy" decoding="async"/><span>{index+1}</span></button>)}</div>
+              <div className="product-image-stage"><img src={activeDetailImage} srcSet={`${mobileImage(activeDetailImage)} 1800w, ${activeDetailImage} 5400w`} sizes="(max-width: 1000px) 100vw, 58vw" alt={`${activeDetailProject.title} ${detailGalleryIndex+1}`} loading="eager" fetchPriority="high" decoding="async"/><div className="product-visual-shade"/><button className="product-image-nav previous" aria-label="上一张图片" onClick={()=>setDetailGalleryIndex((detailGalleryIndex-1+activeDetailGallery.length)%activeDetailGallery.length)}><ChevronLeft/></button><button className="product-image-nav next" aria-label="下一张图片" onClick={()=>setDetailGalleryIndex((detailGalleryIndex+1)%activeDetailGallery.length)}><ChevronRight/></button><button className="product-fullscreen" aria-label="放大查看" onPointerEnter={event=>prepareFullscreenTarget(event.currentTarget.closest('.product-image-stage')?.querySelector('img') ?? null)} onFocus={event=>prepareFullscreenTarget(event.currentTarget.closest('.product-image-stage')?.querySelector('img') ?? null)} onClick={()=>openImageLightbox(activeDetailGallery, detailGalleryIndex)}><Maximize2 size={19}/></button></div>
+              <div className="product-thumbnails">{activeDetailGallery.map((image,index)=><button className={index===detailGalleryIndex?'active':''} key={image} onClick={()=>setDetailGalleryIndex(index)} aria-label={`查看第 ${index+1} 张图片`}><img src={thumbnailImage(image)} alt="" loading="lazy" decoding="async"/><span>{index+1}</span></button>)}</div>
             </div>
             <div className="product-info"><div><small>Featured Product</small><h3>{activeDetailProject.title}</h3><div className="product-tags">{activeDetailProject.tags.map(tag=><span key={tag}>{tag}</span>)}</div><p>{activeDetailProject.summary}</p></div><div className="product-detail-grid selling-points"><div><h4>内容框位</h4><ul>{activeDetailProject.sellingPoints.map((item,index)=><li key={item}><span>{index+1}</span>{item}</li>)}</ul></div></div></div>
           </div>
@@ -496,6 +505,6 @@ export default function App() {
     </div></section>
 
     <footer className="site-footer shell"><p>Have a strange idea?</p><a href="mailto:hello@jack.studio">Let's make it real <ArrowUpRight /></a><span>© 2026 FENG</span></footer>
-    {expandedImage && <motion.div className="image-lightbox" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} onClick={()=>setExpandedImage(null)}><img key={expandedImage.images[expandedImage.index]} src={expandedImage.images[expandedImage.index]} alt={`放大查看第 ${expandedImage.index + 1} 张`} onClick={event=>event.stopPropagation()}/>{expandedImage.images.length > 1 && <><button className="lightbox-nav previous" type="button" aria-label="上一张图片" onClick={event=>{event.stopPropagation();changeExpandedImage(-1)}}><ChevronLeft size={30}/></button><button className="lightbox-nav next" type="button" aria-label="下一张图片" onClick={event=>{event.stopPropagation();changeExpandedImage(1)}}><ChevronRight size={30}/></button><span className="lightbox-count">{expandedImage.index + 1} / {expandedImage.images.length}</span></>}<button className="lightbox-close" type="button" aria-label="关闭放大查看" onClick={()=>setExpandedImage(null)}>×</button></motion.div>}
+    {expandedImage && <motion.div className="image-lightbox" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} onClick={()=>setExpandedImage(null)}><img key={expandedImage.images[expandedImage.index]} src={expandedImage.images[expandedImage.index]} srcSet={`${mobileImage(expandedImage.images[expandedImage.index])} 1800w, ${expandedImage.images[expandedImage.index]} 5400w`} sizes="100vw" alt={`放大查看第 ${expandedImage.index + 1} 张`} onClick={event=>event.stopPropagation()}/>{expandedImage.images.length > 1 && <><button className="lightbox-nav previous" type="button" aria-label="上一张图片" onClick={event=>{event.stopPropagation();changeExpandedImage(-1)}}><ChevronLeft size={30}/></button><button className="lightbox-nav next" type="button" aria-label="下一张图片" onClick={event=>{event.stopPropagation();changeExpandedImage(1)}}><ChevronRight size={30}/></button><span className="lightbox-count">{expandedImage.index + 1} / {expandedImage.images.length}</span></>}<button className="lightbox-close" type="button" aria-label="关闭放大查看" onClick={()=>setExpandedImage(null)}>×</button></motion.div>}
   </main>
 }
