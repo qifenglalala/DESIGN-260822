@@ -162,11 +162,11 @@ nav{position:fixed!important;top:0;right:0;left:0;z-index:100}.welcome-marquee-r
   .nav-links a{min-width:0;padding:0 2px;font-size:11px;letter-spacing:0}
   .nav-active{inset:-8px -3px;border-radius:9px}
   .hero{height:100svh;min-height:540px}
-  .hero-stage{width:100%;aspect-ratio:1/.96}
-  .hero-stage h1{top:42%;font-size:12cqw}
-  .hero-stage h1 span:first-child{right:58%}
-  .hero-stage h1 span:last-child{left:57%}
-  .portrait{top:3%;width:76%}
+  .hero-stage{width:100%;aspect-ratio:1057/447}
+  .hero-stage h1{top:40.7%;font-size:11.65cqw}
+  .hero-stage h1 span:first-child{right:61.5%}
+  .hero-stage h1 span:last-child{left:59.5%}
+  .portrait{top:4.3%;width:53%}
   .welcome-border{left:3%;right:3%;top:37%;height:23%;border-radius:13px}
   .welcome-marquee{inset:1px;width:calc(100% - 2px);height:calc(100% - 2px)}
   .about{padding:94px 0 70px}
@@ -246,8 +246,7 @@ nav{position:fixed!important;top:0;right:0;left:0;z-index:100}.welcome-marquee-r
   .nav-logo{font-size:17px}
   .nav-links a{font-size:10px}
   .hero{min-height:520px}
-  .hero-stage{aspect-ratio:1/.92}
-  .hero-stage h1{font-size:12.4cqw}
+  .hero-stage{aspect-ratio:1057/447}
   .product-tabs button{padding:9px 8px}
   .product-tabs button>span{width:33px;height:33px}
   .packaging-click-hint{display:none}
