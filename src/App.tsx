@@ -117,11 +117,11 @@ function prepareImage(src: string, priority: 'high' | 'low' = 'low') {
   return prepared
 }
 
-function warmImages(images: string[]) {
+function warmImages(images: string[], priority: 'high' | 'low' = 'low') {
   images.forEach(src => {
     if (warmedImages.has(src)) return
     warmedImages.add(src)
-    void prepareImage(src)
+    void prepareImage(src, priority)
   })
 }
 
@@ -233,7 +233,8 @@ export default function App() {
   const openImageLightbox = (images: string[], index: number) => {
     const nextIndex = (index + 1) % images.length
     const previousIndex = (index - 1 + images.length) % images.length
-    warmImages([images[index], images[nextIndex], images[previousIndex]])
+    warmImages([images[index]], 'high')
+    warmImages([images[nextIndex], images[previousIndex]])
     setExpandedImage({ images, index })
   }
   const openPdf = (file: string) => {
@@ -261,7 +262,7 @@ export default function App() {
   const activeVideo = videoCategories[videoCategoryIndex].items[Math.min(videoItemIndex, videoCategories[videoCategoryIndex].items.length - 1)]
 
   const selectProject = (index: number) => {
-    warmImages([designProjects[index].gallery[0]])
+    warmImages([designProjects[index].gallery[0]], 'high')
     startTransition(() => {
       setProjectIndex(index)
       setGalleryIndex(0)
@@ -269,7 +270,7 @@ export default function App() {
   }
 
   const selectDetailProject = (index: number) => {
-    warmImages([detailProjects[index].gallery[0]])
+    warmImages([detailProjects[index].gallery[0]], 'high')
     startTransition(() => {
       setDetailProjectIndex(index)
       setDetailGalleryIndex(0)
@@ -327,7 +328,7 @@ export default function App() {
         <div className="hero-stage">
           <div className="welcome-border" aria-hidden="true"><svg className="welcome-marquee" viewBox="0 0 1000 100" preserveAspectRatio="none"><defs><linearGradient id="welcome-marquee-gradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#7c3aed" stopOpacity=".08"/><stop offset="24%" stopColor="#8b5cf6"/><stop offset="48%" stopColor="#f0abfc"/><stop offset="65%" stopColor="#fff7ed"/><stop offset="82%" stopColor="#c084fc"/><stop offset="100%" stopColor="#7c3aed" stopOpacity=".08"/></linearGradient></defs><rect className="welcome-marquee-track" x="2" y="2" width="996" height="96" rx="18" ry="18"/><rect className="welcome-marquee-aura" x="2" y="2" width="996" height="96" rx="18" ry="18" strokeDasharray="90 2063.1" strokeDashoffset="0"><animate attributeName="stroke-dashoffset" begin="0s" from="0" to="-2153.1" dur="22s" repeatCount="indefinite" calcMode="linear"/></rect><rect className="welcome-marquee-aura" x="2" y="2" width="996" height="96" rx="18" ry="18" strokeDasharray="90 2063.1" strokeDashoffset="-1076.55"><animate attributeName="stroke-dashoffset" begin="0s" from="-1076.55" to="-3229.65" dur="22s" repeatCount="indefinite" calcMode="linear"/></rect><rect className="welcome-marquee-runner" x="2" y="2" width="996" height="96" rx="18" ry="18" strokeDasharray="90 2063.1" strokeDashoffset="0"><animate attributeName="stroke-dashoffset" begin="0s" from="0" to="-2153.1" dur="22s" repeatCount="indefinite" calcMode="linear"/></rect><rect className="welcome-marquee-runner welcome-marquee-runner-opposite" x="2" y="2" width="996" height="96" rx="18" ry="18" strokeDasharray="90 2063.1" strokeDashoffset="-1076.55"><animate attributeName="stroke-dashoffset" begin="0s" from="-1076.55" to="-3229.65" dur="22s" repeatCount="indefinite" calcMode="linear"/></rect></svg></div>
           <motion.h1 initial={{ opacity: 0, y: 45 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .85, delay: .15 }}><span>Wel</span><span>Come</span></motion.h1>
-          <motion.img className="portrait" src={portrait} alt="杨起锋作品集人物形象" initial={{ opacity: 0, y: 70, scale: .92 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 1, delay: .35 }} />
+          <motion.img className="portrait" src={portrait} alt="杨起锋作品集人物形象" loading="eager" fetchPriority="high" decoding="async" initial={{ opacity: 0, y: 70, scale: .92 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 1, delay: .35 }} />
         </div>
       </div>
     </section>
