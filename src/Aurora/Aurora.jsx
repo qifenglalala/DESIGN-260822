@@ -119,12 +119,14 @@ export default function Aurora(props) {
   useEffect(() => {
     const ctn = ctnDom.current;
     if (!ctn) return;
+    const compactViewport = window.matchMedia('(max-width: 640px)').matches;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const renderer = new Renderer({
       alpha: true,
       premultipliedAlpha: true,
       antialias: false,
-      dpr: Math.min(window.devicePixelRatio, 1.5)
+      dpr: Math.min(window.devicePixelRatio, compactViewport ? 1 : 1.5)
     });
     const gl = renderer.gl;
     gl.clearColor(0, 0, 0, 0);
@@ -171,9 +173,17 @@ export default function Aurora(props) {
     let isVisible = !document.hidden;
     let previousStops = '';
     let cachedStops = colorStopsArray;
+    let lastRenderAt = 0;
+    const frameInterval = compactViewport ? 1000 / 28 : 0;
     const update = t => {
       if (!isVisible) return;
+      if (reduceMotion) {
+        renderer.render({ scene: mesh });
+        return;
+      }
       animateId = requestAnimationFrame(update);
+      if (frameInterval && t - lastRenderAt < frameInterval) return;
+      lastRenderAt = t;
       const { time = t * 0.01, speed = 1.0 } = propsRef.current;
       program.uniforms.uTime.value = time * speed * 0.1;
       program.uniforms.uAmplitude.value = propsRef.current.amplitude ?? 1.0;
@@ -193,14 +203,15 @@ export default function Aurora(props) {
 
     const handleVisibilityChange = () => {
       isVisible = !document.hidden;
-      if (isVisible && !animateId) animateId = requestAnimationFrame(update);
+      if (isVisible && !animateId && !reduceMotion) animateId = requestAnimationFrame(update);
       if (!isVisible) {
         cancelAnimationFrame(animateId);
         animateId = 0;
       }
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    animateId = requestAnimationFrame(update);
+    if (reduceMotion) update(0);
+    else animateId = requestAnimationFrame(update);
 
     resize();
 

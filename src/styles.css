@@ -256,3 +256,6 @@ nav{position:fixed!important;top:0;right:0;left:0;z-index:100}.welcome-marquee-r
 }
 
 .studio-plan-toolbar{cursor:pointer}
+.site-aurora{contain:paint}
+.hero:before{will-change:transform}
+@media(max-width:640px){.hero:before{animation-duration:11s}.site-aurora canvas{image-rendering:auto}}
