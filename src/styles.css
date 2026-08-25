@@ -259,3 +259,14 @@ nav{position:fixed!important;top:0;right:0;left:0;z-index:100}.welcome-marquee-r
 .site-aurora{contain:paint}
 .hero:before{will-change:transform}
 @media(max-width:640px){.hero:before{animation-duration:11s}.site-aurora canvas{image-rendering:auto}}
+
+/* 手机首屏：让欢迎画面紧接导航下方，避免竖屏出现大面积空白。 */
+@media(max-width:640px){
+  .hero{height:520px;min-height:0}
+  .hero-stage{height:400px;aspect-ratio:auto}
+  .hero:before{background-size:cover;background-position:center top;opacity:.58}
+}
+@media(max-width:390px){
+  .hero{height:510px}
+  .hero-stage{height:390px}
+}
