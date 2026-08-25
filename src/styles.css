@@ -275,7 +275,7 @@ nav{position:fixed!important;top:0;right:0;left:0;z-index:100}.welcome-marquee-r
 @media(max-width:640px){
   .hero:before{background-size:100% auto;background-position:center top;background-repeat:no-repeat}
   .portrait{top:-1%;width:78%}
-  .hero-stage h1{top:34.5%;transform:translateY(-50%);font-size:15.5cqw}
-  .welcome-border{top:22%;height:25%}
+  .hero-stage h1{top:37%;transform:translateY(-50%);font-size:11.3cqw}
+  .welcome-border{top:31.5%;height:11%;border-radius:16px}
   .hero-stage:after{z-index:0;background:url('/hero-prayer-flags.png') center bottom/100% auto no-repeat;opacity:.56;mix-blend-mode:screen}
 }
