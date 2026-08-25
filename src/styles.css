@@ -273,9 +273,13 @@ nav{position:fixed!important;top:0;right:0;left:0;z-index:100}.welcome-marquee-r
 
 /* 仅手机端：放大欢迎画面，并完整保留顶部彩旗。 */
 @media(max-width:640px){
+  .hero-inner{width:100%;margin:0}
+  .hero{background:radial-gradient(ellipse at 50% 44%,#2a1554 0%,#171034 48%,#09070f 100%)}
   .hero:before{background-size:100% auto;background-position:center top;background-repeat:no-repeat}
   .portrait{top:-1%;width:78%}
   .hero-stage h1{top:37%;transform:translateY(-50%);font-size:11.3cqw}
+  .hero-stage h1 span:first-child{right:63%}
+  .hero-stage h1 span:last-child{left:65.5%}
   .welcome-border{top:31.5%;height:11%;border-radius:16px}
   .hero-stage:after{z-index:0;background:url('/hero-prayer-flags.png') center bottom/100% auto no-repeat;opacity:.56;mix-blend-mode:screen}
 }
