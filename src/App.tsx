@@ -192,17 +192,81 @@ const detailProjects = [
   { title: '拍摄间搭建', icon: Film, gallery: productPlaceholders, tags: ['摄影棚', '灯光搭建', '空间规划'], summary: '展示拍摄间从空间规划、设备配置、灯光搭建到实际拍摄落地的完整过程。', sellingPoints: ['空间规划', '场景布置', '灯光方案', '设备配置', '现场搭建', '拍摄测试'] }
 ]
 
+const allImageProjects = [...designProjects, ...detailProjects]
+
 function Fade({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
   return <motion.div className={className} initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .15 }} transition={{ duration: .7, delay }}>{children}</motion.div>
+}
+
+function ProjectReveal({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
+  return <motion.div className={className} initial={{ opacity: 0, y: 42, scale: .985 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, amount: .1 }} transition={{ duration: .82, delay, ease: [0.22, 1, 0.36, 1] }}>{children}</motion.div>
 }
 
 function ContactButton() {
   return <a className="contact" href="mailto:hello@jack.studio">Contact me <ArrowUpRight size={19} /></a>
 }
 
+function ImageProjectCard({ project, index, onOpen }: { project: typeof allImageProjects[number]; index: number; onOpen: (images: string[], imageIndex: number) => void }) {
+  const [galleryIndex, setGalleryIndex] = useState(0)
+  const gallery = project.gallery
+  const activeImage = gallery[Math.min(galleryIndex, gallery.length - 1)]
+  const isDirectory = index === 1 || index === 2
+
+  return <ProjectReveal delay={Math.min(index * .04, .2)} className="product-feature independent-project-card">
+    <div className="product-main">
+      <div className="product-visual">
+        <div className="product-image-stage">
+          <img src={mobileImage(activeImage)} srcSet={`${mobileImage(activeImage)} 1600w, ${activeImage} 5000w`} sizes="(max-width: 1000px) 100vw, 58vw" alt={`${project.title} ${galleryIndex + 1}`} loading={index === 0 ? 'eager' : 'lazy'} fetchPriority={index === 0 ? 'high' : 'auto'} decoding="async"/>
+          <div className="product-visual-shade"/>
+          {gallery.length > 1 && <><button className="product-image-nav previous" aria-label="上一张图片" onClick={() => setGalleryIndex((galleryIndex - 1 + gallery.length) % gallery.length)}><ChevronLeft/></button><button className="product-image-nav next" aria-label="下一张图片" onClick={() => setGalleryIndex((galleryIndex + 1) % gallery.length)}><ChevronRight/></button></>}
+          <button className="product-fullscreen" aria-label="放大查看" onPointerEnter={event=>prepareFullscreenTarget(event.currentTarget.closest('.product-image-stage')?.querySelector('img') ?? null)} onFocus={event=>prepareFullscreenTarget(event.currentTarget.closest('.product-image-stage')?.querySelector('img') ?? null)} onClick={()=>onOpen(gallery, galleryIndex)}><Maximize2 size={19}/></button>
+        </div>
+        {gallery.length > 1 && <div className="product-thumbnails">{gallery.map((image, imageIndex) => <button className={imageIndex === galleryIndex ? 'active' : ''} key={image} onPointerEnter={()=>warmImages([image])} onFocus={()=>warmImages([image])} onClick={() => setGalleryIndex(imageIndex)} aria-label={`查看第 ${imageIndex + 1} 张图片`}><img src={thumbnailImage(image)} alt="" loading="lazy" decoding="async"/><span>{imageIndex + 1}</span></button>)}</div>}
+      </div>
+      <div className="product-info"><div><small>Featured Product</small><h3>{project.title}</h3><div className="product-tags">{project.tags.map(tag=><span key={tag}>{tag}</span>)}</div><p>{project.summary}</p></div><div className="product-detail-grid selling-points"><div><h4>{isDirectory ? '作品目录' : '卖点展示'}</h4><ul>{project.sellingPoints.map((item, itemIndex)=><li key={`${itemIndex}-${item}`}><span>{itemIndex + 1}</span>{item}</li>)}</ul></div></div></div>
+    </div>
+  </ProjectReveal>
+}
+
+function SuiteCommerceCard({ onOpen }: { onOpen: (images: string[], imageIndex: number) => void }) {
+  const [galleryIndex, setGalleryIndex] = useState(0)
+  const [pageIndexes, setPageIndexes] = useState(() => detailPageGroups.map(() => 0))
+  const image = suiteMainRenders[galleryIndex]
+  const changePage = (pageIndex: number, direction: number) => setPageIndexes(current => current.map((slideIndex, index) => index === pageIndex ? (slideIndex + direction + detailPageGroups[index].length) % detailPageGroups[index].length : slideIndex))
+  return <ProjectReveal delay={.16} className="product-feature independent-project-card">
+    <div className="suite-case-layout">
+      <div className="suite-main-gallery"><div className="suite-main-stage"><img src={mobileImage(image)} srcSet={`${mobileImage(image)} 1600w, ${image} 5000w`} sizes="(max-width: 1000px) 100vw, 48vw" alt={`跨境电商套图主图 ${galleryIndex + 1}`} loading="lazy" decoding="async"/><button className="product-image-nav previous" aria-label="上一张主图" onClick={()=>setGalleryIndex((galleryIndex-1+suiteMainRenders.length)%suiteMainRenders.length)}><ChevronLeft/></button><button className="product-image-nav next" aria-label="下一张主图" onClick={()=>setGalleryIndex((galleryIndex+1)%suiteMainRenders.length)}><ChevronRight/></button><button className="product-fullscreen" aria-label="放大查看主图" onClick={()=>onOpen(suiteMainRenders, galleryIndex)}><Maximize2 size={19}/></button></div><div className="suite-thumbnails">{suiteMainRenders.map((item,index)=><button className={index===galleryIndex?'active':''} key={item} onClick={()=>setGalleryIndex(index)} aria-label={`查看第 ${index+1} 张套图`}><img src={thumbnailImage(item)} alt="" loading="lazy" decoding="async"/><span>{index+1}</span></button>)}</div></div>
+      <div className="suite-detail-panel"><div className="suite-detail-heading"><div><small>DETAIL PAGE</small><b>详情页展示</b></div><span>向下滚动 ↓</span></div><div className="suite-detail-scroll" tabIndex={0} aria-label="跨境电商详情页，可向下滚动查看">{detailPageGroups.map((slides,index)=>index===0 ? <img src={slides[pageIndexes[index]]} alt="跨境电商详情页第 1 段" key="detail-page-1" loading="lazy" decoding="async"/> : <div className="detail-page-slide" key={`detail-page-${index+1}`}><img src={slides[pageIndexes[index]]} alt={`跨境电商详情页第 ${index+1} 段`} loading="lazy" decoding="async"/><button className="detail-page-nav previous" aria-label={`详情页第 ${index+1} 段上一张`} onClick={()=>changePage(index,-1)}><ChevronLeft/></button><button className="detail-page-nav next" aria-label={`详情页第 ${index+1} 段下一张`} onClick={()=>changePage(index,1)}><ChevronRight/></button></div>)}</div></div>
+    </div>
+  </ProjectReveal>
+}
+
+function DomesticCommerceCard({ onOpen }: { onOpen: (images: string[], imageIndex: number) => void }) {
+  return <ProjectReveal delay={.2} className="product-feature independent-project-card">
+    <div className="suite-case-layout domestic-case-layout"><div className="domestic-report-panel"><img src={mobileImage(domesticReport)} srcSet={`${mobileImage(domesticReport)} 1600w, ${domesticReport} 5000w`} sizes="(max-width: 1000px) 100vw, 48vw" alt="国内电商销售战报" loading="lazy" decoding="async" role="button" tabIndex={0} onClick={()=>onOpen([domesticReport],0)} onKeyDown={event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();onOpen([domesticReport],0)}}}/><button className="product-fullscreen" aria-label="放大查看销售战报" onClick={()=>onOpen([domesticReport],0)}><Maximize2 size={19}/></button></div><div className="suite-detail-panel"><div className="suite-detail-heading"><div><small>DETAIL PAGE</small><b>国内电商详情页</b></div><span>向下滚动 ↓</span></div><div className="suite-detail-scroll" tabIndex={0} aria-label="国内电商详情页，可向下滚动查看">{domesticDetailRenders.map((image,index)=><img src={mobileImage(image)} srcSet={`${mobileImage(image)} 1600w, ${image} 5000w`} sizes="(max-width: 1000px) 100vw, 48vw" alt={`国内电商详情页第 ${index+1} 张`} key={image} loading="lazy" decoding="async"/>)}</div></div></div>
+  </ProjectReveal>
+}
+
+function StudioBuildCard({ onOpenPdf }: { onOpenPdf: (file: string) => void }) {
+  return <ProjectReveal delay={.28} className="product-feature independent-project-card">
+    <div className="product-main studio-build-layout"><div className="studio-plan-viewer"><div className="studio-plan-toolbar" role="link" tabIndex={0} aria-label="在新标签页打开拍摄间装修方案" onClick={()=>onOpenPdf(studioBuildPlan)} onKeyDown={event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();onOpenPdf(studioBuildPlan)}}}><span>装修方案 4.0</span><small>向下滚动浏览完整方案</small></div><iframe src={`${studioBuildPlan}#view=FitH`} title="拍摄间装修方案" loading="lazy"/></div><div className="product-info"><div><small>STUDIO BUILD PLAN</small><h3>拍摄间搭建</h3><div className="product-tags"><span>摄影棚</span><span>灯光搭建</span><span>空间规划</span></div><p>完整装修方案已嵌入，可在左侧直接滚动浏览各页内容。</p></div><div className="product-detail-grid selling-points"><div><h4>方案目录</h4><ul>{['空间规划','场景布置','灯光方案','设备配置','现场搭建','拍摄测试'].map((item,index)=><li key={item}><span>{index+1}</span>{item}</li>)}</ul></div></div></div></div>
+  </ProjectReveal>
+}
+
+function ScrollProjectNavigator({ start, end, activeIndex, isCurrent }: { start: number; end: number; activeIndex: number; isCurrent: boolean }) {
+  const projects = allImageProjects.slice(start, end + 1)
+  const visibleIndex = Math.min(Math.max(activeIndex, start), end)
+  const progress = ((visibleIndex - start + 1) / projects.length) * 100
+  return <div className={`scroll-project-navigator ${isCurrent ? 'is-current' : ''}`} aria-label={`作品 ${String(start + 1).padStart(2, '0')} 至 ${String(end + 1).padStart(2, '0')} 浏览进度`}>
+    <div className="scroll-project-tabs">{projects.map((project, offset) => { const Icon = project.icon; const index = start + offset; return <div className={`scroll-project-tab ${index === visibleIndex ? 'active' : ''}`} key={project.title}><span><Icon size={19}/></span><i><small>{String(index + 1).padStart(2, '0')}</small><b>{project.title}</b></i></div> })}</div>
+    <div className="scroll-project-controls"><div><b>{String(visibleIndex + 1).padStart(2, '0')} <em>/ {String(end + 1).padStart(2, '0')}</em></b><i><u style={{ width: `${progress}%` }}/></i></div></div>
+  </div>
+}
+
 export default function App() {
   const [activeSection, setActiveSection] = useState('')
   const [projectIndex, setProjectIndex] = useState(0)
+  const [activeScrollProjectIndex, setActiveScrollProjectIndex] = useState(0)
   const [galleryIndex, setGalleryIndex] = useState(0)
   const [detailProjectIndex, setDetailProjectIndex] = useState(0)
   const [detailGalleryIndex, setDetailGalleryIndex] = useState(0)
@@ -261,6 +325,19 @@ export default function App() {
       window.cancelAnimationFrame(frameId)
       window.clearTimeout(navigationTimer.current)
     }
+  }, [])
+
+  useEffect(() => {
+    const groups = Array.from(document.querySelectorAll<HTMLElement>('.scroll-project-group'))
+    if (!groups.length) return
+    const observer = new IntersectionObserver(entries => {
+      const current = entries.filter(entry => entry.isIntersecting).sort((a, b) => Math.abs(a.boundingClientRect.top) - Math.abs(b.boundingClientRect.top))[0]
+      if (!current) return
+      const index = Number((current.target as HTMLElement).dataset.projectIndex)
+      if (Number.isInteger(index)) setActiveScrollProjectIndex(previous => previous === index ? previous : index)
+    }, { rootMargin: '-25% 0px -55% 0px', threshold: .01 })
+    groups.forEach(group => observer.observe(group))
+    return () => observer.disconnect()
   }, [])
 
   const openImageLightbox = (images: string[], index: number) => {
@@ -441,6 +518,11 @@ export default function App() {
 
     <section className="projects" id="projects"><div className="products-shell">
       <Fade className="product-heading"><h2>Product</h2><span/><p>图片设计&nbsp;&nbsp;|&nbsp;&nbsp;杨起锋 FENG</p></Fade>
+      <div className="independent-project-list">
+        {allImageProjects.slice(0, 4).map((project, index)=><div className="scroll-project-group" data-project-index={index} key={project.title}><ScrollProjectNavigator start={0} end={3} activeIndex={index} isCurrent={activeScrollProjectIndex === index}/><ImageProjectCard project={project} index={index} onOpen={openImageLightbox}/></div>)}
+        {allImageProjects.slice(4).map((project, offset)=>{const index = offset + 4; return <div className="scroll-project-group" data-project-index={index} key={project.title}><ScrollProjectNavigator start={4} end={7} activeIndex={index} isCurrent={activeScrollProjectIndex === index}/>{index === 4 ? <SuiteCommerceCard onOpen={openImageLightbox}/> : index === 5 ? <DomesticCommerceCard onOpen={openImageLightbox}/> : index === 7 ? <StudioBuildCard onOpenPdf={openPdf}/> : <ImageProjectCard project={project} index={index} onOpen={openImageLightbox}/>}</div>})}
+      </div>
+      <div className="legacy-image-design">
       <div className="product-tabs">{designProjects.map((project,index)=>{const Icon=project.icon;return <button className={index===projectIndex?'active':''} onPointerEnter={()=>warmImages([project.gallery[0]])} onFocus={()=>warmImages([project.gallery[0]])} onClick={()=>selectProject(index)} key={project.title}><span><Icon size={19}/></span><i><small>0{index+1}</small><b>{project.title}</b></i></button>})}</div>
       <Fade delay={.1} className="product-feature">
         <div className="product-controls"><button aria-label="上一个项目" onClick={()=>selectProject((projectIndex-1+designProjects.length)%designProjects.length)}><ChevronLeft/></button><div><b>{String(projectIndex+1).padStart(2,'0')} <span>/ {String(designProjects.length).padStart(2,'0')}</span></b><i><u style={{width:`${(projectIndex+1)/designProjects.length*100}%`}}/></i></div><button aria-label="下一个项目" onClick={()=>selectProject((projectIndex+1)%designProjects.length)}><ChevronRight/></button></div>
@@ -513,6 +595,7 @@ export default function App() {
           }
         </div>
       </Fade>
+      </div>
     </div></section>
 
     <section className="services packaging-section" id="experience"><div className="shell">
