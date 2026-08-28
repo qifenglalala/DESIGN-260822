@@ -389,34 +389,49 @@ export default function App() {
 
         <div className="resume-grid" onMouseMove={handlePointerGlow}>
           <Fade className="resume-card profile-card">
-            <div className="card-title"><span>01</span><h3>个人资料</h3></div>
-            <div className="profile-facts"><p><small>求职方向</small>视觉设计师 / 电商设计师 / 平面设计师...</p><p><small>出生年月</small>1995年12月</p><p><small>籍贯</small>广东阳春</p><p><small>民族</small>汉族</p><p><small>身高 / 体重</small>178cm / 73kg</p><p><small>性别</small>男</p></div>
+            <div className="card-title"><span>01</span><h3>个人优势/ADVANTAGE</h3></div>
+            <div className="profile-facts advantage-summary">
+              <p>6年小家电跨境电商全链路视觉经验。</p>
+              <ol className="advantage-list">
+                <li>擅长亚马逊 / TK / 独立站视觉体系搭建；</li>
+                <li>擅长产品拍摄、C4D-OC 三维渲染、包装量产落地；</li>
+                <li>具备团队管理、项目统筹、成本管控能力，通过视觉实现降本增效，完整交付产品 0-1 上市与海外众筹项目。</li>
+              </ol>
+            </div>
           </Fade>
 
           <Fade delay={.05} className="resume-card skills-card">
-            <div className="card-title"><span>02</span><h3>职业技能</h3></div>
-            <div className="skill-row"><b>AI / PS / ID / C4D</b><i><u style={{width:'96%'}}/></i><em>精通</em></div>
-            <div className="skill-row"><b>PR / 剪映 / AIGC</b><i><u style={{width:'94%'}}/></i><em>精通</em></div>
-            <div className="skill-row"><b>Rhino / WPS</b><i><u style={{width:'76%'}}/></i><em>熟练</em></div>
+            <div className="card-title"><span>02</span><h3>软件工具/TOOLS</h3></div>
+            <ul className="tools-list">
+              <li><b>平面：</b>Photoshop、Illustrator、InDesign</li>
+              <li><b>三维渲染：</b>C4D-OC 渲染、Rhino</li>
+              <li><b>视频：</b>Premiere、剪映、微单</li>
+              <li><b>AI工具：</b>ChatGPT、ComfyUI、Codex</li>
+            </ul>
           </Fade>
 
           <Fade delay={.1} className="resume-card advantage-card">
-            <div className="card-title"><span>03</span><h3>个人优势</h3></div>
-            <ul><li>擅长 SONY、尼康微单及单反操作，熟悉产品摄影、视频拍摄、灯光设备与场景布置。</li><li>擅长亚马逊、独立站主图与详情页、海报、产品精修、C4D 场景渲染、视频剪辑调色及 AIGC 应用。</li><li>熟悉包装设计、物料工艺及制作流程。</li><li>具备设计团队管理能力，可统筹设计相关工作。</li><li>沟通及时、执行力强，能够适应高强度工作。</li></ul>
+            <div className="card-title"><span>03</span><h3>核心能力/COMPETENCIES</h3></div>
+            <ul>
+              <li><b>电商视觉：</b>Amazon 主图/A+、详情页、品牌KV、独立站</li>
+              <li><b>产品内容：</b>产品摄影、场景搭建、精修、视频策划及剪辑</li>
+              <li><b>包装量产：</b>包装资料设计、多语言说明书排版、打样跟进</li>
+              <li><b>项目协同：</b>GTM 节点、排期管理、跨部门协同、设计规范</li>
+            </ul>
           </Fade>
 
           <Fade delay={.15} className="resume-card experience-card">
-            <div className="card-title"><span>04</span><h3>工作履历</h3></div>
+            <div className="card-title"><span>04</span><h3>工作履历/WORK EXPERIENCE</h3></div>
             <div className="career"><p><b>追觅科技有限公司</b><time>2025.06 — 2026.08</time></p><p><b>广东新宝电器股份有限公司</b><time>2021.04 — 2025.06</time></p><p><b>广州市惠多广告有限公司</b><time>2018.03 — 2021.02</time></p><p><b>广州市衣鸽文化发展有限公司</b><time>2017.12 — 2018.02</time></p></div>
           </Fade>
 
           <Fade delay={.2} className="resume-card education-card">
-            <div className="card-title"><span>05</span><h3>教育背景</h3></div>
+            <div className="card-title"><span>05</span><h3>教育背景/EDUCATION</h3></div>
             <div className="education-item"><time>2015.09 — 2019.07</time><h4>天津大学 · 工业设计</h4><p>学士学位</p></div><div className="education-item"><time>2015.09 — 2018.06</time><h4>广东工贸职业技术学院 · 计算机应用技术</h4><p>专科学位 · 荣获“国家三好学生奖学金”一次</p></div>
           </Fade>
 
           <Fade delay={.25} className="resume-card contact-card">
-            <div className="card-title"><span>06</span><h3>联系我</h3></div>
+            <div className="card-title"><span>06</span><h3>联系我/CONTACT</h3></div>
             <a href="tel:13192553802"><small>电话 / 微信</small>131 9255 3802</a><a href="mailto:1136939259@qq.com"><small>邮箱</small>1136939259@qq.com</a><p><small>现居地</small>佛山市顺德区勒流街道</p>
           </Fade>
         </div>
