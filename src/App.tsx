@@ -3,8 +3,6 @@ import { ArrowUpRight, Box, ChevronLeft, ChevronRight, Film, ImageIcon, Images, 
 import Aurora from './Aurora/Aurora'
 import { startTransition, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
-const portrait = '/hero-feng.webp'
-
 const work = [
   'https://motionsites.ai/assets/hero-space-voyage-preview-eECLH3Yc.gif',
   'https://motionsites.ai/assets/hero-codenest-preview-Cgppc2qV.gif',
@@ -63,13 +61,14 @@ const retouchRenders = Array.from(
   { length: 6 },
   (_, index) => `/retouch-cases/retouch-${String(index + 1).padStart(2, '0')}.jpg?v=20260821`,
 )
+const layoutImages = Array.from({ length: 16 }, (_, index) => `/layout/${index + 2}.jpg`)
 const coffeeSellingPoints = ['直列萃取', '黄金萃取技术', '双锅炉同时萃取和打奶泡', '深度清洁', '智能调控水量', '水路清洁']
 
 const navItems = [
-  ['about', '自我简介'],
-  ['projects', '图片设计'],
-  ['experience', '包装设计'],
-  ['contact', '视频合集']
+  ['about-intro', '01 自我介绍'],
+  ['visual-design', '02 图片设计'],
+  ['experience', '03 包装设计'],
+  ['contact', '04 视频合集']
 ] as const
 
 const packagingProjects = [
@@ -82,7 +81,12 @@ const packagingProjects = [
 ]
 
 const videoCategories = [
-  { title: '推广视频', english: 'PROMOTION', description: '用于品牌传播、产品发布与营销活动的主视觉影片。', items: [{ title: '品牌形象片', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117138471786699&bvid=BV1QG816dECn&cid=41158378553&p=1', cover: '/video-cover/s20-pro-promo-cover-0822.png' }] },
+  { title: '社媒推广视频', english: 'SOCIAL PROMOTION', description: '用于品牌传播、产品发布与营销活动的主视觉影片。', items: [
+    { title: '品牌形象片', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117138471786699&bvid=BV1QG816dECn&cid=41158378553&p=1', cover: '/video-cover/s20-pro-promo-cover-0822.png' },
+    { title: '多场景咖啡机应用', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117189306752930&bvid=BV19Kth62Eje&cid=41459122555&p=1', cover: '/video-cover/social-multiscene-coffee.jpg', portrait: true },
+    { title: '拍粉器推广视频', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117189323529673&bvid=BV1oft86HEr5&cid=41459256512&p=1', cover: '/video-cover/social-tamper-promo.jpg' },
+    { title: 'AI咖啡滴落', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117189340370944&bvid=BV1Eot869Ega&cid=41459320246&p=1', cover: '/video-cover/social-ai-coffee-drip.jpg' }
+  ] },
   { title: '操作视频', english: 'HOW TO', description: '通过清晰的镜头语言演示安装、使用、清洁与维护流程。', items: [
     { title: 'S20 Pro开箱指引&首次使用', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117138387964223&bvid=BV1un816HEHp&cid=41155234166&p=1', cover: '/video-cover/s20-unboxing-first-use.png' },
     { title: 'S20 Pro如何找到合适的磨豆粗细档位与粉量(首次使用或更换咖啡豆)', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117138387965492&bvid=BV1un816HEMJ&cid=41155103072&p=1', cover: '/video-cover/s20-grind-size-and-dose.png' },
@@ -202,6 +206,14 @@ function ProjectReveal({ children, delay = 0, className = '' }: { children: Reac
   return <motion.div className={className} initial={{ opacity: 0, y: 42, scale: .985 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, amount: .1 }} transition={{ duration: .82, delay, ease: [0.22, 1, 0.36, 1] }}>{children}</motion.div>
 }
 
+function LayoutImageGallery({ images, startNumber }: { images: string[]; startNumber: number }) {
+  return <div className="layout-image-gallery">
+    {images.map((image, index) => <motion.figure id={image === '/layout/3.jpg' ? 'about-intro' : image === '/layout/4.jpg' ? 'visual-design' : undefined} className="layout-image-item" key={image} initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .1 }} transition={{ duration: .65, ease: [0.22, 1, 0.36, 1] }}>
+      <img src={image} alt={`作品集排版 ${startNumber + index}`} loading={index === 0 ? 'eager' : 'lazy'} fetchPriority={index === 0 ? 'high' : 'auto'} decoding="async" />
+    </motion.figure>)}
+  </div>
+}
+
 function ContactButton() {
   return <a className="contact" href="mailto:hello@jack.studio">Contact me <ArrowUpRight size={19} /></a>
 }
@@ -273,6 +285,7 @@ export default function App() {
   const [detailPageIndexes, setDetailPageIndexes] = useState(() => detailPageGroups.map(() => 0))
   const [videoCategoryIndex, setVideoCategoryIndex] = useState(0)
   const [videoItemIndex, setVideoItemIndex] = useState(0)
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false)
   const [expandedImage, setExpandedImage] = useState<{ images: string[]; index: number } | null>(null)
   const [manualPageIndexes, setManualPageIndexes] = useState([0, 0])
   const [openPackagingIndexes, setOpenPackagingIndexes] = useState<number[]>([])
@@ -296,7 +309,7 @@ export default function App() {
   }, [openPackagingIndexes])
 
   useEffect(() => {
-    const sectionIds = ['about', 'projects', 'experience', 'contact']
+    const sectionIds = ['about-intro', 'visual-design', 'experience', 'contact']
     let frameId = 0
     const updateActiveSection = () => {
       if (navigationLock.current) return
@@ -448,17 +461,16 @@ export default function App() {
       <div className="nav-links">{navItems.map(([id, label]) => <a className={activeSection === id ? 'is-active' : ''} href={`#${id}`} onClick={event => handleNavClick(event, id)} key={id}>{activeSection === id && <motion.span className="nav-active" layoutId="nav-active" transition={{ type: 'spring', stiffness: 260, damping: 28, mass: .72 }} />}<span className="nav-label">{label}</span></a>)}</div>
     </motion.nav>
     <section className="hero" id="home">
-      <div className="shell hero-inner">
-        <div className="hero-stage">
-          <div className="welcome-border" aria-hidden="true"><svg className="welcome-marquee" viewBox="0 0 1000 100" preserveAspectRatio="none"><defs><linearGradient id="welcome-marquee-gradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#7c3aed" stopOpacity=".08"/><stop offset="24%" stopColor="#8b5cf6"/><stop offset="48%" stopColor="#f0abfc"/><stop offset="65%" stopColor="#fff7ed"/><stop offset="82%" stopColor="#c084fc"/><stop offset="100%" stopColor="#7c3aed" stopOpacity=".08"/></linearGradient></defs><rect className="welcome-marquee-track" x="2" y="2" width="996" height="96" rx="18" ry="18"/><rect className="welcome-marquee-aura" x="2" y="2" width="996" height="96" rx="18" ry="18" strokeDasharray="90 2063.1" strokeDashoffset="0"><animate attributeName="stroke-dashoffset" begin="0s" from="0" to="-2153.1" dur="22s" repeatCount="indefinite" calcMode="linear"/></rect><rect className="welcome-marquee-aura" x="2" y="2" width="996" height="96" rx="18" ry="18" strokeDasharray="90 2063.1" strokeDashoffset="-1076.55"><animate attributeName="stroke-dashoffset" begin="0s" from="-1076.55" to="-3229.65" dur="22s" repeatCount="indefinite" calcMode="linear"/></rect><rect className="welcome-marquee-runner" x="2" y="2" width="996" height="96" rx="18" ry="18" strokeDasharray="90 2063.1" strokeDashoffset="0"><animate attributeName="stroke-dashoffset" begin="0s" from="0" to="-2153.1" dur="22s" repeatCount="indefinite" calcMode="linear"/></rect><rect className="welcome-marquee-runner welcome-marquee-runner-opposite" x="2" y="2" width="996" height="96" rx="18" ry="18" strokeDasharray="90 2063.1" strokeDashoffset="-1076.55"><animate attributeName="stroke-dashoffset" begin="0s" from="-1076.55" to="-3229.65" dur="22s" repeatCount="indefinite" calcMode="linear"/></rect></svg></div>
-          <motion.h1 initial={{ opacity: 0, y: 45 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .85, delay: .15 }}><span>Wel</span><span>Come</span></motion.h1>
-          <motion.img className="portrait" src={portrait} alt="杨起锋作品集人物形象" loading="eager" fetchPriority="high" decoding="async" initial={{ opacity: 0, y: 28, scale: .98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: .45 }} />
-        </div>
+      <div className="hero-inner portfolio-cover-inner">
+        <motion.div className="portfolio-cover-stage" initial={{ opacity: 0, y: 22, scale: .985 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: .7, ease: [0.22, 1, 0.36, 1] }}>
+          <img className="portfolio-cover" src="/portfolio-cover.jpg" alt="杨起锋作品集封面" loading="eager" fetchPriority="high" decoding="async"/>
+        </motion.div>
       </div>
     </section>
 
     <div className="aurora-zone">
-      <section className="about shell" id="about">
+      <section className="about shell layout-image-section" id="about">
+        <LayoutImageGallery images={layoutImages.slice(0, 8)} startNumber={2} />
         <div className="about-intro" onMouseMove={handlePointerGlow}>
           <Fade className="glow-surface name-glow"><span className="eyebrow">/ About me</span><h2>杨起锋<br/><em>Feng</em></h2></Fade>
           <Fade delay={.1} className="profile-lead glow-surface"><span>8+ YEARS OF DESIGN</span><p>专注品牌平面视觉全案，从电商、VI系统、宣传物料、包装物料到营销海报，用设计传递品牌温度，助力品牌流量与口碑双增长。</p></Fade>
@@ -516,7 +528,8 @@ export default function App() {
       </section>
     </div>
 
-    <section className="projects" id="projects"><div className="products-shell">
+    <section className="projects layout-image-projects" id="projects"><div className="products-shell">
+      <LayoutImageGallery images={layoutImages.slice(8)} startNumber={10} />
       <Fade className="product-heading"><h2>Product</h2><span/><p>图片设计&nbsp;&nbsp;|&nbsp;&nbsp;杨起锋 FENG</p></Fade>
       <div className="independent-project-list">
         {allImageProjects.slice(0, 4).map((project, index)=><div className="scroll-project-group" data-project-index={index} key={project.title}><ScrollProjectNavigator start={0} end={3} activeIndex={index} isCurrent={activeScrollProjectIndex === index}/><ImageProjectCard project={project} index={index} onOpen={openImageLightbox}/></div>)}
@@ -599,7 +612,7 @@ export default function App() {
     </div></section>
 
     <section className="services packaging-section" id="experience"><div className="shell">
-      <Fade className="section-head packaging-head"><div><span className="eyebrow dark">/ Packaging design</span><p>从零售展示到运输交付，建立完整、统一且可落地的包装视觉系统。</p></div><h2>PACKAGING</h2></Fade>
+      <Fade className="section-head packaging-head"><div><span className="eyebrow dark">/ 03 PACKAGING DESIGN</span><p>从零售展示到运输交付，建立完整、统一且可落地的包装视觉系统。</p></div><h2>03 包装设计</h2></Fade>
       <div className="packaging-list">{packagingProjects.map((project, i) => {const isPackagingOpen=openPackagingIndexes.includes(i);return <Fade delay={i * .05} key={project.title} className={`packaging-item ${isPackagingOpen?'is-open':''}`}>
         <button className="packaging-row" type="button" aria-expanded={isPackagingOpen} onMouseDown={event=>event.preventDefault()} onClick={()=>togglePackaging(i)}>
           <span className="packaging-index"><b>{String(i + 1).padStart(2, '0')}</b><small>{project.english}</small></span>
@@ -619,14 +632,14 @@ export default function App() {
     </div></section>
 
     <section className="video-collection" id="contact"><div className="shell">
-      <Fade className="video-heading"><div><span>/ 04 VIDEO WORKS</span><h2>视频合集</h2></div><p>VIDEO<br/>COLLECTION</p></Fade>
+      <Fade className="video-heading"><div><span>/ 04 VIDEO WORKS</span><h2>04 视频合集</h2></div><p>VIDEO<br/>COLLECTION</p></Fade>
       <div className="video-layout">
-        <div className="video-category-list">{videoCategories.map((category,index)=><button className={index===videoCategoryIndex?'active':''} onClick={()=>{setVideoCategoryIndex(index);setVideoItemIndex(0)}} key={category.title}><span>{String(index+1).padStart(2,'0')}</span><i><b>{category.title}</b><small>{category.english}</small></i><ArrowUpRight size={18}/></button>)}</div>
+        <div className="video-category-list">{videoCategories.map((category,index)=><button className={index===videoCategoryIndex?'active':''} onClick={()=>{setVideoCategoryIndex(index);setVideoItemIndex(0);setIsVideoPlaying(false)}} key={category.title}><span>{String(index+1).padStart(2,'0')}</span><i><b>{category.title}</b><small>{category.english}</small></i><ArrowUpRight size={18}/></button>)}</div>
         <div className="video-player-card embedded-video">
-          <div className="video-player-top"><span>{videoCategories[videoCategoryIndex].english}</span><small>PROJECT {String(videoCategoryIndex+1).padStart(2,'0')} / 04</small></div>
-          <a className={`video-cover ${videoCategoryIndex===2&&videoItemIndex>0?'portrait-cover':''}`} href={activeVideo.url} target="_blank" rel="noreferrer" aria-label={`打开${activeVideo.title}播放页`}><img src={activeVideo.cover} alt={`${activeVideo.title}视频封面`} loading="lazy" decoding="async"/><span><Play fill="currentColor" size={22}/></span><b>点击播放</b></a>
+          <div className="video-player-top"><span>{videoCategories[videoCategoryIndex].english}</span><small>PROJECT {String(videoItemIndex+1).padStart(2,'0')} / {String(videoCategories[videoCategoryIndex].items.length).padStart(2,'0')}</small></div>
+          {isVideoPlaying ? <div className="video-embed"><iframe key={activeVideo.url} src={`${activeVideo.url}&autoplay=1`} title={`${activeVideo.title}视频播放`} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen /></div> : <button className={`video-cover ${(videoCategoryIndex===2&&videoItemIndex>0)||('portrait' in activeVideo&&activeVideo.portrait)?'portrait-cover':''}`} onClick={()=>setIsVideoPlaying(true)} aria-label={`播放${activeVideo.title}`}><img src={activeVideo.cover} alt={`${activeVideo.title}视频封面`} loading="lazy" decoding="async"/><span><Play fill="currentColor" size={22}/></span><b>点击播放</b></button>}
         </div>
-        <div className="video-project-info"><small>SELECTED CATEGORY</small><h3>{videoCategories[videoCategoryIndex].title}</h3><p>{videoCategories[videoCategoryIndex].description}</p><div>{videoCategories[videoCategoryIndex].items.map((item,index)=><button className={index===videoItemIndex?'active':''} key={item.url} onClick={()=>setVideoItemIndex(index)}><span>{String(index+1).padStart(2,'0')}</span>{item.title}<Play size={13}/></button>)}</div></div>
+        <div className="video-project-info"><small>SELECTED CATEGORY</small><h3>{videoCategories[videoCategoryIndex].title}</h3><p>{videoCategories[videoCategoryIndex].description}</p><div>{videoCategories[videoCategoryIndex].items.map((item,index)=><button className={index===videoItemIndex?'active':''} key={item.url} onClick={()=>{setVideoItemIndex(index);setIsVideoPlaying(false)}}><span>{String(index+1).padStart(2,'0')}</span>{item.title}<Play size={13}/></button>)}</div></div>
       </div>
     </div></section>
 
