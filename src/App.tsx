@@ -81,8 +81,8 @@ const packagingProjects = [
 ]
 
 const videoCategories = [
-  { title: '社媒推广视频', english: 'SOCIAL PROMOTION', description: '用于品牌传播、产品发布与营销活动的主视觉影片。', items: [
-    { title: '品牌形象片', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117138471786699&bvid=BV1QG816dECn&cid=41158378553&p=1', cover: '/video-cover/s20-pro-promo-cover-0822.png' },
+  { title: '半自动咖啡机推广视频', english: 'SOCIAL PROMOTION', description: '用于品牌传播、产品发布与营销活动的主视觉影片。', items: [
+    { title: '半自动咖啡机推广', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117138471786699&bvid=BV1QG816dECn&cid=41158378553&p=1', cover: '/video-cover/s20-pro-promo-cover-0822.png' },
     { title: '多场景咖啡机应用', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117189306752930&bvid=BV19Kth62Eje&cid=41459122555&p=1', cover: '/video-cover/social-multiscene-coffee.jpg', portrait: true },
     { title: '拍粉器推广视频', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117189323529673&bvid=BV1oft86HEr5&cid=41459256512&p=1', cover: '/video-cover/social-tamper-promo.jpg' },
     { title: 'AI咖啡滴落', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117189340370944&bvid=BV1Eot869Ega&cid=41459320246&p=1', cover: '/video-cover/social-ai-coffee-drip.jpg' }
@@ -209,7 +209,7 @@ function ProjectReveal({ children, delay = 0, className = '' }: { children: Reac
 function LayoutImageGallery({ images, startNumber }: { images: string[]; startNumber: number }) {
   return <div className="layout-image-gallery">
     {images.map((image, index) => <motion.figure id={image === '/layout/3.jpg' ? 'about-intro' : image === '/layout/4.jpg' ? 'visual-design' : undefined} className="layout-image-item" key={image} initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .1 }} transition={{ duration: .65, ease: [0.22, 1, 0.36, 1] }}>
-      <img src={image} alt={`作品集排版 ${startNumber + index}`} loading={index === 0 ? 'eager' : 'lazy'} fetchPriority={index === 0 ? 'high' : 'auto'} decoding="async" />
+      <img src={image} srcSet={`/mobile${image} 1200w, ${image} 5000w`} sizes="(max-width: 640px) 100vw, 1700px" width="5000" height="3126" alt={`作品集排版 ${startNumber + index}`} loading={index === 0 ? 'eager' : 'lazy'} fetchPriority={index === 0 ? 'high' : 'auto'} decoding="async" />
     </motion.figure>)}
   </div>
 }
@@ -383,6 +383,7 @@ export default function App() {
   const activeDetailGallery = activeDetailProject.gallery
   const activeDetailImage = activeDetailGallery[Math.min(detailGalleryIndex, activeDetailGallery.length - 1)]
   const activeVideo = videoCategories[videoCategoryIndex].items[Math.min(videoItemIndex, videoCategories[videoCategoryIndex].items.length - 1)]
+  const activeVideoAspectRatio = activeVideo.cover.startsWith('/video-cover/drink-') && !activeVideo.cover.includes('lemon-fizz') ? '480 / 851' : '16 / 9'
 
   // Keep the first screen responsive on limited server bandwidth: load the active
   // image first, then prepare only its immediate neighbours for carousel navigation.
@@ -463,7 +464,7 @@ export default function App() {
     <section className="hero" id="home">
       <div className="hero-inner portfolio-cover-inner">
         <motion.div className="portfolio-cover-stage" initial={{ opacity: 0, y: 22, scale: .985 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: .7, ease: [0.22, 1, 0.36, 1] }}>
-          <img className="portfolio-cover" src="/portfolio-cover.jpg" alt="杨起锋作品集封面" loading="eager" fetchPriority="high" decoding="async"/>
+          <img className="portfolio-cover" src="/portfolio-cover.jpg" srcSet="/mobile/portfolio-cover.jpg 3600w, /portfolio-cover.jpg 5000w" sizes="(max-width: 640px) 100vw, 1700px" width="5000" height="3126" alt="杨起锋作品集封面" loading="eager" fetchPriority="high" decoding="async"/>
         </motion.div>
       </div>
     </section>
@@ -637,7 +638,7 @@ export default function App() {
         <div className="video-category-list">{videoCategories.map((category,index)=><button className={index===videoCategoryIndex?'active':''} onClick={()=>{setVideoCategoryIndex(index);setVideoItemIndex(0);setIsVideoPlaying(false)}} key={category.title}><span>{String(index+1).padStart(2,'0')}</span><i><b>{category.title}</b><small>{category.english}</small></i><ArrowUpRight size={18}/></button>)}</div>
         <div className="video-player-card embedded-video">
           <div className="video-player-top"><span>{videoCategories[videoCategoryIndex].english}</span><small>PROJECT {String(videoItemIndex+1).padStart(2,'0')} / {String(videoCategories[videoCategoryIndex].items.length).padStart(2,'0')}</small></div>
-          {isVideoPlaying ? <div className="video-embed"><iframe key={activeVideo.url} src={`${activeVideo.url}&autoplay=1`} title={`${activeVideo.title}视频播放`} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen /></div> : <button className={`video-cover ${(videoCategoryIndex===2&&videoItemIndex>0)||('portrait' in activeVideo&&activeVideo.portrait)?'portrait-cover':''}`} onClick={()=>setIsVideoPlaying(true)} aria-label={`播放${activeVideo.title}`}><img src={activeVideo.cover} alt={`${activeVideo.title}视频封面`} loading="lazy" decoding="async"/><span><Play fill="currentColor" size={22}/></span><b>点击播放</b></button>}
+          {isVideoPlaying ? <div className="video-embed" style={{ aspectRatio: activeVideoAspectRatio }}><iframe key={activeVideo.url} src={`${activeVideo.url}&autoplay=1&muted=0`} title={`${activeVideo.title}视频播放`} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen /></div> : <button className={`video-cover ${(videoCategoryIndex===2&&videoItemIndex>0)||('portrait' in activeVideo&&activeVideo.portrait)?'portrait-cover':''}`} style={{ aspectRatio: activeVideoAspectRatio }} onClick={()=>setIsVideoPlaying(true)} aria-label={`播放${activeVideo.title}`}><img src={activeVideo.cover} alt={`${activeVideo.title}视频封面`} loading="lazy" decoding="async"/><span><Play fill="currentColor" size={22}/></span><b>点击播放</b></button>}
         </div>
         <div className="video-project-info"><small>SELECTED CATEGORY</small><h3>{videoCategories[videoCategoryIndex].title}</h3><p>{videoCategories[videoCategoryIndex].description}</p><div>{videoCategories[videoCategoryIndex].items.map((item,index)=><button className={index===videoItemIndex?'active':''} key={item.url} onClick={()=>{setVideoItemIndex(index);setIsVideoPlaying(false)}}><span>{String(index+1).padStart(2,'0')}</span>{item.title}<Play size={13}/></button>)}</div></div>
       </div>
