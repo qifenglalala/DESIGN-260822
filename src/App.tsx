@@ -464,7 +464,7 @@ export default function App() {
     <section className="hero" id="home">
       <div className="hero-inner portfolio-cover-inner">
         <motion.div className="portfolio-cover-stage" initial={{ opacity: 0, y: 22, scale: .985 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: .7, ease: [0.22, 1, 0.36, 1] }}>
-          <img className="portfolio-cover" src="/portfolio-cover.jpg" srcSet="/mobile/portfolio-cover.jpg 3600w, /portfolio-cover.jpg 5000w" sizes="(max-width: 640px) 100vw, 1700px" width="5000" height="3126" alt="杨起锋作品集封面" loading="eager" fetchPriority="high" decoding="async"/>
+          <img className="portfolio-cover" src="/portfolio-cover.jpg" srcSet="/mobile/portfolio-cover.jpg?v=20260901-mobile-full 3600w, /portfolio-cover.jpg 5000w" sizes="(max-width: 640px) 100vw, 1700px" width="5000" height="3126" alt="杨起锋作品集封面" loading="eager" fetchPriority="high" decoding="async"/>
         </motion.div>
       </div>
     </section>
