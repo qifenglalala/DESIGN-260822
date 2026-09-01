@@ -277,6 +277,7 @@ function ScrollProjectNavigator({ start, end, activeIndex, isCurrent }: { start:
 
 export default function App() {
   const [activeSection, setActiveSection] = useState('')
+  const [isPhoneDevice, setIsPhoneDevice] = useState(false)
   const [projectIndex, setProjectIndex] = useState(0)
   const [activeScrollProjectIndex, setActiveScrollProjectIndex] = useState(0)
   const [galleryIndex, setGalleryIndex] = useState(0)
@@ -289,6 +290,12 @@ export default function App() {
   const [expandedImage, setExpandedImage] = useState<{ images: string[]; index: number } | null>(null)
   const [manualPageIndexes, setManualPageIndexes] = useState([0, 0])
   const [openPackagingIndexes, setOpenPackagingIndexes] = useState<number[]>([])
+
+  useEffect(() => {
+    const phoneUserAgent = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
+    const portraitTouchScreen = navigator.maxTouchPoints > 0 && window.screen.height > window.screen.width
+    setIsPhoneDevice(phoneUserAgent || portraitTouchScreen)
+  }, [])
   const navigationLock = useRef(false)
   const navigationTimer = useRef<number | undefined>(undefined)
   const packagingScrollPosition = useRef<number | null>(null)
@@ -462,14 +469,14 @@ export default function App() {
       <a className="nav-logo" href="#home">Hi, I'm Feng</a>
       <div className="nav-links">{navItems.map(([id, label]) => <a className={activeSection === id ? 'is-active' : ''} href={`#${id}`} onClick={event => handleNavClick(event, id)} key={id}>{activeSection === id && <motion.span className="nav-active" layoutId="nav-active" transition={{ type: 'spring', stiffness: 260, damping: 28, mass: .72 }} />}<span className="nav-label">{label}</span></a>)}</div>
     </motion.nav>
-      <section className="hero" id="home">
+      <section className={`hero${isPhoneDevice ? ' mobile-cover-bypass' : ''}`} id="home">
         <div className="hero-inner portfolio-cover-inner">
           <motion.div className="portfolio-cover-stage" initial={{ opacity: 0, y: 22, scale: .985 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: .7, ease: [0.22, 1, 0.36, 1] }}>
             <img className="portfolio-cover" src="/portfolio-cover.jpg" srcSet="/mobile/portfolio-cover-mobile-complete.jpg 2000w, /portfolio-cover.jpg 5000w" sizes="(max-width: 640px) 100vw, 1700px" width="5000" height="3126" alt="杨起锋作品集封面" loading="eager" fetchPriority="high" decoding="async"/>
           </motion.div>
         </div>
       </section>
-      <section className="mobile-portfolio-cover" aria-label="杨起锋作品集封面">
+      <section className={`mobile-portfolio-cover${isPhoneDevice ? ' mobile-cover-active' : ''}`} aria-label="杨起锋作品集封面">
         <img src="/mobile/portfolio-cover-mobile-complete.jpg" width="2000" height="1250" alt="杨起锋作品集封面" loading="eager" fetchPriority="high" decoding="async" />
       </section>
 
