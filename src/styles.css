@@ -360,6 +360,13 @@ html,body,.site-aurora,main,.hero,.aurora-zone,.projects,.services,.packaging-se
   margin:0!important;
   object-fit:contain!important;
 }
+/* Desktop intentionally overlaps this zone for its visual transition.  On phones
+   that overlap covered the lower contact line of the cover, so keep the sections
+   in normal document flow. */
+.aurora-zone.mobile-flow-zone{
+  margin-top:0!important;
+  padding-top:0!important;
+}
 /* Mobile browsers can retain an old fixed-height hero layer even after its children
    are overridden.  Render the same cover in a separate, normal-flow section on
    portrait screens so the whole bitmap always participates in the document height. */

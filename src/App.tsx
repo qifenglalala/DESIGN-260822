@@ -480,7 +480,7 @@ export default function App() {
         <img src="/mobile/portfolio-cover-mobile-complete.jpg" width="2000" height="1250" alt="杨起锋作品集封面" loading="eager" fetchPriority="high" decoding="async" />
       </section>
 
-    <div className="aurora-zone">
+    <div className={`aurora-zone${isPhoneDevice ? ' mobile-flow-zone' : ''}`}>
       <section className="about shell layout-image-section" id="about">
         <LayoutImageGallery images={layoutImages.slice(0, 8)} startNumber={2} />
         <div className="about-intro" onMouseMove={handlePointerGlow}>
