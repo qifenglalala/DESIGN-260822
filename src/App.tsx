@@ -81,7 +81,7 @@ const packagingProjects = [
 ]
 
 const videoCategories = [
-  { title: '半自动咖啡机推广视频', english: 'SOCIAL PROMOTION', description: '用于品牌传播、产品发布与营销活动的主视觉影片。', items: [
+  { title: '社媒推广', english: 'SOCIAL PROMOTION', description: '用于品牌传播、产品发布与营销活动的主视觉影片。', items: [
     { title: '半自动咖啡机推广', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117138471786699&bvid=BV1QG816dECn&cid=41158378553&p=1', cover: '/video-cover/s20-pro-promo-cover-0822.png' },
     { title: '多场景咖啡机应用', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117189306752930&bvid=BV19Kth62Eje&cid=41459122555&p=1', cover: '/video-cover/social-multiscene-coffee.jpg', portrait: true },
     { title: '拍粉器推广视频', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117189323529673&bvid=BV1oft86HEr5&cid=41459256512&p=1', cover: '/video-cover/social-tamper-promo.jpg' },
