@@ -209,7 +209,7 @@ function ProjectReveal({ children, delay = 0, className = '' }: { children: Reac
 function LayoutImageGallery({ images, startNumber }: { images: string[]; startNumber: number }) {
   return <div className="layout-image-gallery">
     {images.map((image, index) => <motion.figure id={image === '/layout/3.jpg' ? 'about-intro' : image === '/layout/4.jpg' ? 'visual-design' : undefined} className="layout-image-item" key={image} initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .1 }} transition={{ duration: .65, ease: [0.22, 1, 0.36, 1] }}>
-      <img src={image} srcSet={`/mobile${image} 1200w, ${image} 5000w`} sizes="(max-width: 640px) 100vw, 1700px" width="5000" height="3126" alt={`作品集排版 ${startNumber + index}`} loading={index === 0 ? 'eager' : 'lazy'} fetchPriority={index === 0 ? 'high' : 'auto'} decoding="async" />
+      <picture><source media="(max-width: 640px)" srcSet={`/mobile${image}`} /><img src={image} width="5000" height="3126" alt={`作品集排版 ${startNumber + index}`} loading={index === 0 ? 'eager' : 'lazy'} fetchPriority={index === 0 ? 'high' : 'auto'} decoding="async" /></picture>
     </motion.figure>)}
   </div>
 }
@@ -465,7 +465,7 @@ export default function App() {
     <section className="hero" id="home">
       <div className="hero-inner portfolio-cover-inner">
         <motion.div className="portfolio-cover-stage" initial={{ opacity: 0, y: 22, scale: .985 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: .7, ease: [0.22, 1, 0.36, 1] }}>
-          <img className="portfolio-cover" src="/portfolio-cover.jpg" srcSet="/mobile/portfolio-cover.jpg?v=20260901-mobile-full 3600w, /portfolio-cover.jpg 5000w" sizes="(max-width: 640px) 100vw, 1700px" width="5000" height="3126" alt="杨起锋作品集封面" loading="eager" fetchPriority="high" decoding="async"/>
+          <img className="portfolio-cover" src="/portfolio-cover.jpg" srcSet="/mobile/portfolio-cover-v2.jpg 2000w, /portfolio-cover.jpg 5000w" sizes="(max-width: 640px) 100vw, 1700px" width="5000" height="3126" alt="杨起锋作品集封面" loading="eager" fetchPriority="high" decoding="async"/>
         </motion.div>
       </div>
     </section>
