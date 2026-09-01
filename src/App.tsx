@@ -465,12 +465,12 @@ export default function App() {
       <section className="hero" id="home">
         <div className="hero-inner portfolio-cover-inner">
           <motion.div className="portfolio-cover-stage" initial={{ opacity: 0, y: 22, scale: .985 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: .7, ease: [0.22, 1, 0.36, 1] }}>
-            <img className="portfolio-cover" src="/portfolio-cover.jpg" srcSet="/mobile/portfolio-cover-v2.jpg 2000w, /portfolio-cover.jpg 5000w" sizes="(max-width: 640px) 100vw, 1700px" width="5000" height="3126" alt="杨起锋作品集封面" loading="eager" fetchPriority="high" decoding="async"/>
+            <img className="portfolio-cover" src="/portfolio-cover.jpg" srcSet="/mobile/portfolio-cover-mobile-complete.jpg 2000w, /portfolio-cover.jpg 5000w" sizes="(max-width: 640px) 100vw, 1700px" width="5000" height="3126" alt="杨起锋作品集封面" loading="eager" fetchPriority="high" decoding="async"/>
           </motion.div>
         </div>
       </section>
       <section className="mobile-portfolio-cover" aria-label="杨起锋作品集封面">
-        <img src="/mobile/portfolio-cover-v2.jpg" width="2000" height="1250" alt="杨起锋作品集封面" loading="eager" fetchPriority="high" decoding="async" />
+        <img src="/mobile/portfolio-cover-mobile-complete.jpg" width="2000" height="1250" alt="杨起锋作品集封面" loading="eager" fetchPriority="high" decoding="async" />
       </section>
 
     <div className="aurora-zone">
