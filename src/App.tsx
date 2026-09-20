@@ -35,23 +35,19 @@ const detailPageGroups = [
 const domesticReport = '/domestic-commerce/report.jpg?v=20260825'
 const studioBuildPlan = '/studio-build/studio-build-plan.pdf'
 const colorBoxCases = [
-  { label: 'EC30 Ultra / MOVA 欧版彩盒', file: '/color-box/ec30-ultra-color-box.pdf' },
-  { label: 'PC20 Pro 便携式咖啡机彩盒', file: '/color-box/pc20-pro-color-box.pdf' }
+  { label: '3.1 彩盒设计', file: '/color-box/portfolio-4.jpg?v=20260920-6' }
 ]
 const masterCartonCases = [
-  { label: 'EC30 Ultra / MOVA 欧版物流箱', file: '/master-carton/ec30-ultra-master-carton.pdf' },
-  { label: 'SCM1705-UL 银色外箱', file: '/master-carton/scm1705-ul-master-carton.pdf' }
+  { label: '3.2 外箱设计', file: '/master-carton/portfolio-5.jpg?v=20260920-9' }
 ]
 const ratingLabelCases = [
-  { label: 'EC30 Ultra / MOVA 欧版机身铭牌', file: '/rating-label/ec30-ultra-mova-rating-label.pdf' },
-  { label: 'XR2403 / MOVA 国内机身铭牌', file: '/rating-label/xr2403-mova-rating-label.pdf' }
+  { label: '3.4 铭牌设计', file: '/rating-label/portfolio-6.jpg?v=20260920-10' }
 ]
 const quickStartGuideCases = [
-  { label: 'ECBC-EC30 / MOVA 中文版双面印刷卡片', file: '/quick-start-guide/ecbc-ec30-mova-quick-start-guide.pdf' }
+  { label: '3.5 快速指引卡', file: '/quick-start-guide/portfolio-7.jpg?v=20260920-11' }
 ]
 const userManualCases = [
-  { label: 'SN20 Pro / XR2505 六国欧版说明书', file: '/user-manual/sn20-pro-eu-user-manual.pdf', pages: 44 },
-  { label: 'F20 / XR2601 美版三国语言说明书', file: '/user-manual/f20-us-user-manual.pdf', pages: 22 }
+  { label: 'SN20 Pro / XR2505 六国欧版说明书', file: '/user-manual/sn20-pro-eu-user-manual.pdf', pages: 44 }
 ]
 const brandGuideCases = [
   { label: '听树品牌手册更新 + 产品设计图', file: '/brand-guide/tingshu-brand-guide.pdf' }
@@ -61,7 +57,16 @@ const retouchRenders = Array.from(
   { length: 6 },
   (_, index) => `/retouch-cases/retouch-${String(index + 1).padStart(2, '0')}.jpg?v=20260821`,
 )
-const layoutImages = Array.from({ length: 16 }, (_, index) => `/layout/${index + 2}.jpg`)
+const layoutImages = Array.from({ length: 16 }, (_, index) => {
+  const number = index + 2
+  const image = `/layout/${number}.jpg${number === 3 ? '?v=20260921-2' : number === 14 ? '?v=20260920-15' : ''}`
+
+  return number === 3
+    ? [image, '/layout/3-2.jpg?v=20260921-3']
+    : number === 14
+    ? [image, '/layout/14-2.jpg?v=20260920-5', '/layout/14-3.jpg?v=20260920-5']
+    : [image]
+}).flat()
 const coffeeSellingPoints = ['直列萃取', '黄金萃取技术', '双锅炉同时萃取和打奶泡', '深度清洁', '智能调控水量', '水路清洁']
 
 const navItems = [
@@ -83,9 +88,9 @@ const packagingProjects = [
 const videoCategories = [
   { title: '社媒推广', english: 'SOCIAL PROMOTION', description: '用于品牌传播、产品发布与营销活动的主视觉影片。', items: [
     { title: '半自动咖啡机推广', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117138471786699&bvid=BV1QG816dECn&cid=41158378553&p=1', cover: '/video-cover/s20-pro-promo-cover-0822.png' },
-    { title: '多场景咖啡机应用', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117189306752930&bvid=BV19Kth62Eje&cid=41459122555&p=1', cover: '/video-cover/social-multiscene-coffee.jpg', portrait: true },
+    { title: 'S20 Pro 柠檬气泡咖啡', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117138455009223&bvid=BV1Q5816sEam&cid=41158313935&p=1', cover: '/video-cover/s20-lemon-fizz-coffee.png' },
     { title: '拍粉器推广视频', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117189323529673&bvid=BV1oft86HEr5&cid=41459256512&p=1', cover: '/video-cover/social-tamper-promo.jpg' },
-    { title: 'AI咖啡滴落', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117189340370944&bvid=BV1Eot869Ega&cid=41459320246&p=1', cover: '/video-cover/social-ai-coffee-drip.jpg' }
+    { title: '1005奶泡机推广视频', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117303375042392&bvid=BV1JHez6cExR&cid=42057139368&p=1', cover: '/video-cover/1005-milk-frother-promo.png?v=20260920-22' }
   ] },
   { title: '操作视频', english: 'HOW TO', description: '通过清晰的镜头语言演示安装、使用、清洁与维护流程。', items: [
     { title: 'S20 Pro开箱指引&首次使用', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117138387964223&bvid=BV1un816HEHp&cid=41155234166&p=1', cover: '/video-cover/s20-unboxing-first-use.png' },
@@ -93,11 +98,11 @@ const videoCategories = [
     { title: 'S20 Pro如何制作意式咖啡(双杯)', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117138387966810&bvid=BV1Mn816HEX3&cid=41155430065&p=1', cover: '/video-cover/s20-double-espresso.png' },
     { title: 'S20 Pro手动定温打奶', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117138387965483&bvid=BV1un816HEMn&cid=41155887440&p=1', cover: '/video-cover/s20-manual-temperature-milk.png' }
   ] },
-  { title: '饮品视频', english: 'DRINK VIDEO', description: '以饮品制作过程呈现产品的使用场景与氛围。', items: [
-    { title: 'S20 Pro 柠檬气泡咖啡', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117138455009223&bvid=BV1Q5816sEam&cid=41158313935&p=1', cover: '/video-cover/s20-lemon-fizz-coffee.png' },
-    { title: '樱花奇异果', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117139092740245&bvid=BV1958m6PE44&cid=41162506784&p=1', cover: '/video-cover/drink-sakura-kiwi.png' },
-    { title: '西柚果汁', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117139092610983&bvid=BV1V58m6PEsZ&cid=41162444772&p=1', cover: '/video-cover/drink-grapefruit-juice.png' },
-    { title: '胡萝卜果汁', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117139092544435&bvid=BV1958m6AE5n&cid=41162444147&p=1', cover: '/video-cover/drink-carrot-juice.png' }
+  { title: 'AIGC视频', english: 'AIGC VIDEO', description: '以AI达成产品的效果，增加产品吸引力。', items: [
+    { title: '耳机外观质感视频', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117303324711080&bvid=BV1NDez63EL7&cid=42056878605&p=1', cover: '/video-cover/headphone-aigc-video.png?v=20260921-1' },
+    { title: 'IPHONE 13 Pro创意视频', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117303811249396&bvid=BV18Fez6LE5W&cid=42059696788&p=1', cover: '/video-cover/iphone-13-pro-creative.png?v=20260920-21' },
+    { title: '地标创意转场', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117304113239694&bvid=BV16BeB68EtA&cid=42061333813&p=1', cover: '/video-cover/landmark-creative-transition.png?v=20260920-23' },
+    { title: 'AI咖啡滴落', url: 'https://player.bilibili.com/player.html?isOutside=true&aid=117189340370944&bvid=BV1Eot869Ega&cid=41459320246&p=1', cover: '/video-cover/social-ai-coffee-drip.jpg' }
   ] }
 ]
 const bilibiliVideoSrc = 'https://player.bilibili.com/player.html?isOutside=true&aid=117138471786699&bvid=BV1QG816dECn&cid=41158378553&p=1'
@@ -368,6 +373,10 @@ export default function App() {
     setExpandedImage({ images, index })
   }
   const openPdf = (file: string) => {
+    if (file.includes('.jpg')) {
+      openImageLightbox([file], 0)
+      return
+    }
     window.open(file, '_blank', 'noopener,noreferrer')
   }
   const changeExpandedImage = (direction: number) => {
@@ -637,7 +646,7 @@ export default function App() {
         {isPackagingOpen&&<div className="packaging-material-panel">
           <div className="packaging-material-inner">
             <div className="packaging-material-title"><div><small>{project.english} / MATERIAL SHOWCASE</small><h4>{project.title}物料展示</h4></div><p>{['color-box','carton','label','guide','manual','brand'].includes(project.type)?'点击右上角图标，即可全屏放大查看方案。':'点击下方位置可依次替换为项目实拍、设计稿与工艺细节。'}</p></div>
-            {project.type==='manual' ? <div className="color-box-document-grid">{userManualCases.map((item,index)=><div className={`color-box-document manual-document color-box-document-${index+1}`} key={item.file}><iframe key={`${item.file}-${manualPageIndexes[index]}`} src={`${item.file}#page=${manualPageIndexes[index]+1}&view=FitH`} title={item.label} loading="lazy"/><span>{String(index+1).padStart(2,'0')}</span><b>{item.label}</b><div className="manual-page-controls"><button type="button" aria-label={`查看${item.label}上一页`} onClick={()=>changeManualPage(index,-1)}><ChevronLeft size={18}/></button><small>{String(manualPageIndexes[index]+1).padStart(2,'0')} / {String(item.pages).padStart(2,'0')}</small><button type="button" aria-label={`查看${item.label}下一页`} onClick={()=>changeManualPage(index,1)}><ChevronRight size={18}/></button></div><button className="color-box-zoom" type="button" aria-label={`在新标签页打开${item.label}`} onClick={()=>openPdf(item.file)}><Maximize2 size={18}/></button></div>)}</div> : ['color-box','carton','label','guide','brand'].includes(project.type) ? <div className={`color-box-document-grid ${['color-box','carton','label'].includes(project.type)?'wide-document-grid':''} ${project.type==='guide'||project.type==='brand'?'single-document-grid':''}`}>{(project.type==='color-box'?colorBoxCases:project.type==='carton'?masterCartonCases:project.type==='label'?ratingLabelCases:project.type==='guide'?quickStartGuideCases:brandGuideCases).map((item,index)=><div className={`color-box-document color-box-document-${index+1}`} key={item.file}><iframe src={`${item.file}#view=FitH`} title={item.label} loading="lazy"/><span>{String(index+1).padStart(2,'0')}</span><b>{item.label}</b><button className="color-box-zoom" type="button" aria-label={`在新标签页打开${item.label}`} onClick={()=>openPdf(item.file)}><Maximize2 size={18}/></button></div>)}</div> : <div className="packaging-material-grid">{['成品效果','正反面展示','刀模 / 展开图','版面细节','材质与工艺','应用场景'].map((label,index)=><div className={index===0?'featured':''} key={label}><img src={`/product-placeholder.svg?packaging=${i+1}-${index+1}`} alt=""/><span>{String(index+1).padStart(2,'0')}</span><b>{label}</b></div>)}</div>}
+            {project.type==='manual' ? <div className="color-box-document-grid">{userManualCases.map((item,index)=><div className={`color-box-document manual-document color-box-document-${index+1}`} key={item.file}><iframe key={`${item.file}-${manualPageIndexes[index]}`} src={`${item.file}#page=${manualPageIndexes[index]+1}&view=FitH`} title={item.label} loading="lazy"/><span>{String(index+1).padStart(2,'0')}</span><b>{item.label}</b><div className="manual-page-controls"><button type="button" aria-label={`查看${item.label}上一页`} onClick={()=>changeManualPage(index,-1)}><ChevronLeft size={18}/></button><small>{String(manualPageIndexes[index]+1).padStart(2,'0')} / {String(item.pages).padStart(2,'0')}</small><button type="button" aria-label={`查看${item.label}下一页`} onClick={()=>changeManualPage(index,1)}><ChevronRight size={18}/></button></div><button className="color-box-zoom" type="button" aria-label={`在新标签页打开${item.label}`} onClick={()=>openPdf(item.file)}><Maximize2 size={18}/></button></div>)}</div> : ['color-box','carton','label','guide','brand'].includes(project.type) ? <div className={`color-box-document-grid ${['color-box','carton','label','guide'].includes(project.type)?'wide-document-grid':''} ${project.type==='color-box'||project.type==='carton'||project.type==='label'||project.type==='guide'||project.type==='brand'?'single-document-grid':''}`}>{(project.type==='color-box'?colorBoxCases:project.type==='carton'?masterCartonCases:project.type==='label'?ratingLabelCases:project.type==='guide'?quickStartGuideCases:brandGuideCases).map((item,index)=><div className={`color-box-document color-box-document-${index+1}`} key={item.file}>{item.file.includes('.jpg') ? <img src={item.file} alt={item.label} loading="lazy"/> : <iframe src={`${item.file}#view=FitH`} title={item.label} loading="lazy"/>}<span>{String(index+1).padStart(2,'0')}</span><b>{item.label}</b><button className="color-box-zoom" type="button" aria-label={`在新标签页打开${item.label}`} onClick={()=>openPdf(item.file)}><Maximize2 size={18}/></button></div>)}</div> : <div className="packaging-material-grid">{['成品效果','正反面展示','刀模 / 展开图','版面细节','材质与工艺','应用场景'].map((label,index)=><div className={index===0?'featured':''} key={label}><img src={`/product-placeholder.svg?packaging=${i+1}-${index+1}`} alt=""/><span>{String(index+1).padStart(2,'0')}</span><b>{label}</b></div>)}</div>}
           </div>
         </div>}
       </Fade>})}</div>

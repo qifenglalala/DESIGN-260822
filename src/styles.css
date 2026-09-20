@@ -416,3 +416,6 @@ html,body,.site-aurora,main,.hero,.aurora-zone,.projects,.services,.packaging-se
 .packaging-head h2{font-size:clamp(48px,5.7vw,96px);letter-spacing:-.04em;white-space:nowrap}
 .video-heading h2{font-size:clamp(48px,5.7vw,96px);letter-spacing:-.04em;white-space:nowrap}
 .layout-image-item{content-visibility:auto;contain-intrinsic-size:auto 1062px}
+.color-box-document>img{display:block;width:92%;height:86%;min-height:0;border:0;border-radius:10px;background:#fff;object-fit:contain}.color-box-document:fullscreen>img{width:100vw;height:100vh;min-height:100vh;border-radius:0;object-fit:contain}
+.color-box-document-grid:has(.manual-document:only-child){grid-template-columns:1fr}.color-box-document-grid:has(.manual-document:only-child) .manual-document{grid-column:1/-1;width:min(860px,100%);justify-self:center}
+.wide-document-grid.single-document-grid{grid-template-columns:minmax(0,1fr);justify-items:center}.wide-document-grid.single-document-grid .color-box-document{width:100%;height:auto;min-height:0;aspect-ratio:1.54}.wide-document-grid.single-document-grid .color-box-document>img{width:100%;height:100%;border-radius:10px;object-fit:cover;object-position:left center}
