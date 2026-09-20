@@ -211,10 +211,34 @@ function ProjectReveal({ children, delay = 0, className = '' }: { children: Reac
   return <motion.div className={className} initial={{ opacity: 0, y: 42, scale: .985 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, amount: .1 }} transition={{ duration: .82, delay, ease: [0.22, 1, 0.36, 1] }}>{children}</motion.div>
 }
 
+function DeferredLayoutImage({ image, alt, eager = false }: { image: string; alt: string; eager?: boolean }) {
+  const placeholderRef = useRef<HTMLDivElement>(null)
+  const [shouldLoad, setShouldLoad] = useState(eager)
+
+  useEffect(() => {
+    if (shouldLoad) return
+    const target = placeholderRef.current
+    if (!target) return
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return
+      setShouldLoad(true)
+      observer.disconnect()
+    }, { rootMargin: '1200px 0px' })
+
+    observer.observe(target)
+    return () => observer.disconnect()
+  }, [shouldLoad])
+
+  return <div className="layout-image-loader" ref={placeholderRef}>
+    {shouldLoad && <picture><source media="(max-width: 640px)" srcSet={`/mobile${image}`} /><img src={image} width="5000" height="3126" alt={alt} loading={eager ? 'eager' : 'lazy'} fetchPriority={eager ? 'high' : 'low'} decoding="async" /></picture>}
+  </div>
+}
+
 function LayoutImageGallery({ images, startNumber }: { images: string[]; startNumber: number }) {
   return <div className="layout-image-gallery">
-    {images.map((image, index) => <motion.figure id={image === '/layout/3.jpg' ? 'about-intro' : image === '/layout/4.jpg' ? 'visual-design' : undefined} className="layout-image-item" key={image} initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .1 }} transition={{ duration: .65, ease: [0.22, 1, 0.36, 1] }}>
-      <picture><source media="(max-width: 640px)" srcSet={`/mobile${image}`} /><img src={image} width="5000" height="3126" alt={`作品集排版 ${startNumber + index}`} loading={index === 0 ? 'eager' : 'lazy'} fetchPriority={index === 0 ? 'high' : 'auto'} decoding="async" /></picture>
+    {images.map((image, index) => <motion.figure id={image.startsWith('/layout/3.jpg') ? 'about-intro' : image.startsWith('/layout/4.jpg') ? 'visual-design' : undefined} className="layout-image-item" key={image} initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .1 }} transition={{ duration: .65, ease: [0.22, 1, 0.36, 1] }}>
+      <DeferredLayoutImage image={image} alt={`作品集排版 ${startNumber + index}`} eager={startNumber === 2 && index === 0} />
     </motion.figure>)}
   </div>
 }
